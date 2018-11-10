@@ -21,11 +21,13 @@ import box2dLight.RayHandler;
 public class LibGDX extends ApplicationAdapter {
 	Texture paddleTx;
 	Texture goalTx;
+	Texture puckTx;
 
 	Stage stage;
 
-	Actor actor;
+	Actor paddle;
 	Actor goal;
+	Actor puck;
 
 	ShapeRenderer shaper;
 
@@ -39,9 +41,11 @@ public class LibGDX extends ApplicationAdapter {
 
 		paddleTx = new Texture("Paddle.png");
 		goalTx = new Texture("Goal.png");
+		puckTx = new Texture("Puck.png");
 
 		TextureRegion region = new TextureRegion(paddleTx, 0, 0, 100, 100);
-		TextureRegion region1 = new TextureRegion(goalTx, 0, 0, 458, 718);
+		TextureRegion region1 = new TextureRegion(goalTx, 0, 0,  718, 458);
+		TextureRegion region2 = new TextureRegion(puckTx, 0, 0, 100, 100);
 
 		Gdx.input.setInputProcessor(stage);
 
@@ -49,16 +53,19 @@ public class LibGDX extends ApplicationAdapter {
 
 		RayHandler.useDiffuseLight(false);
 
-		goal = new Goal(region1, world, stage.getViewport().getScreenWidth() / 2, 0, 458, 718, -90);
+		goal = new Goal(region1, world, stage.getViewport().getScreenWidth() / 4, 0,  718,458, 0);
 		stage.addActor(goal);
 
-		actor = new Paddle(region, world, 0, 0, 100, 0);
-		actor.addListener(new DragListener() {
+		paddle = new Paddle(region, world, 0, 0, 100, 0);
+		paddle.addListener(new DragListener() {
 			public void drag(InputEvent event, float x, float y, int pointer) {
-				actor.moveBy(x - actor.getWidth() / 2, y - actor.getHeight() / 2);
+				paddle.moveBy(x - paddle.getWidth() / 2, y - paddle.getHeight() / 2);
 			}
 		});
-		stage.addActor(actor);
+		puck = new Puck(region2, world, 300, 300, 100, 0);
+
+		stage.addActor(paddle);
+		stage.addActor(puck);
 		stage.setDebugAll(true);
 
 	}
