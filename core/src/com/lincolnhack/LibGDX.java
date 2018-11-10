@@ -17,17 +17,21 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import box2dLight.RayHandler;
 
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
+
 
 public class LibGDX extends ApplicationAdapter {
 	Texture paddleTx;
 	Texture goalTx;
 	Texture puckTx;
+	Texture barrierTx;
 
 	Stage stage;
 
 	Actor paddle;
 	Actor goal;
 	Actor puck;
+	Actor barrier1;
 
 	ShapeRenderer shaper;
 
@@ -42,6 +46,8 @@ public class LibGDX extends ApplicationAdapter {
 		paddleTx = new Texture("Paddle.png");
 		goalTx = new Texture("Goal.png");
 		puckTx = new Texture("Puck.png");
+		barrierTx = new Texture("Barrier.png");
+		barrierTx.setWrap(Repeat, Repeat);
 
 		TextureRegion region = new TextureRegion(paddleTx, 0, 0, 100, 100);
 		TextureRegion region1 = new TextureRegion(goalTx, 0, 0,  718, 458);
@@ -63,10 +69,12 @@ public class LibGDX extends ApplicationAdapter {
 			}
 		});
 		puck = new Puck(region2, world, 300, 300, 100, 0);
+		barrier1 = new Barrier(barrierTx, world, -16, 0, 32, stage.getViewport().getScreenHeight(),0);
 
 		stage.addActor(paddle);
 		stage.addActor(puck);
 		stage.setDebugAll(true);
+		stage.addActor(barrier1);
 
 	}
 

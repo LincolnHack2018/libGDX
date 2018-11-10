@@ -1,5 +1,6 @@
 package com.lincolnhack;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -10,31 +11,34 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class Paddle extends Image {
+import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
+
+public class Barrier extends Image {
 
     private Body body;
     private World world;
 
-    public Paddle(TextureRegion textureRegion, World world, float x, float y, float radius, float angle) {
-        super(textureRegion);
-        this.setSize(radius, radius);
+    public Barrier(Texture texture, World world, float x, float y, float width, float height, float angle) {
+        super(texture);
+
+        this.setSize(width, height);
         this.setOrigin(this.getWidth()/2,this.getHeight()/2);
         this.rotateBy(angle);
         this.setPosition(x,y);
         this.world = world;
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.type = BodyDef.BodyType.StaticBody;
 
         bodyDef.position.set(new Vector2(x, y));
         body = world.createBody(bodyDef);
 
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(this.getWidth()/2);
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(this.getWidth()/2, this.getHeight()/2);
         body.setTransform(this.getX()+this.getWidth()/2,this.getY()+this.getHeight()/2, (float)Math.toRadians(angle));
 
-        body.createFixture(circleShape, 0.0f);
+        body.createFixture(polygonShape, 0.0f);
 
-        circleShape.dispose();
+        polygonShape.dispose();
     }
 
     @Override
@@ -48,4 +52,3 @@ public class Paddle extends Image {
         super.draw(batch, parentAlpha);
     }
 }
-
