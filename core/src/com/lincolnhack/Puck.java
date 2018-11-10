@@ -12,8 +12,11 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import lombok.Getter;
+
 public class Puck extends Image {
-    private Body body;
+
+    @Getter private Body body;
     private World world;
 
     public Puck(TextureRegion textureRegion, World world, float x, float y, float radius, float angle) {
@@ -39,7 +42,7 @@ public class Puck extends Image {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
-        fixtureDef.density = 5f;
+        fixtureDef.density = 1f;
         fixtureDef.friction = 0f;
         fixtureDef.restitution= 1f;
         Fixture fixture = body.createFixture(fixtureDef);
