@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import box2dLight.RayHandler;
 
 import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
+import static com.lincolnhack.Orientation.VERTIVAL;
 
 
 public class LibGDX extends ApplicationAdapter {
@@ -62,19 +63,19 @@ public class LibGDX extends ApplicationAdapter {
 		goal = new Goal(region1, world, stage.getViewport().getScreenWidth() / 4, 0,  718,458, 0);
 		stage.addActor(goal);
 
-		paddle = new Paddle(region, world, 0, 0, 100, 0);
+		paddle = new Paddle(region, world, stage.getViewport().getScreenWidth()/2, 0, 100, 0);
 		paddle.addListener(new DragListener() {
 			public void drag(InputEvent event, float x, float y, int pointer) {
 				paddle.moveBy(x - paddle.getWidth() / 2, y - paddle.getHeight() / 2);
 			}
 		});
 		puck = new Puck(region2, world, 300, 300, 100, 0);
-		barrier1 = new Barrier(barrierTx, world, -16, 0, 32, stage.getViewport().getScreenHeight(),0);
+
+		Field field = new Field(0, 0, VERTIVAL, world, stage, barrierTx);
 
 		stage.addActor(paddle);
 		stage.addActor(puck);
 		stage.setDebugAll(true);
-		stage.addActor(barrier1);
 
 	}
 
