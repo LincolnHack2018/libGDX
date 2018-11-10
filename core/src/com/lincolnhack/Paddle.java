@@ -1,9 +1,9 @@
 package com.lincolnhack;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -29,8 +29,8 @@ public class Paddle extends Image implements InputProcessor {
     private Body puck;
     private Body hitBody;
 
-    public Paddle(TextureRegion textureRegion, Stage stage, World world, Puck puck, float x, float y, float radius, float angle) {
-        super(textureRegion);
+    public Paddle(Texture texture, Stage stage, World world, Puck puck, float x, float y, float radius, float angle) {
+        super(texture);
         this.stage = stage;
         this.puck = puck.getBody();
         this.setSize(radius, radius);
@@ -88,12 +88,9 @@ public class Paddle extends Image implements InputProcessor {
     QueryCallback callback = new QueryCallback() {
         @Override
         public boolean reportFixture (Fixture fixture) {
-            // if the hit fixture's body is the ground body
-            // we ignore it
+
             if (fixture.getBody() == puck) return true;
 
-            // if the hit point is inside the fixture of the body
-            // we report it
             if (fixture.testPoint(testPoint.x, testPoint.y)) {
                 hitBody = fixture.getBody();
                 return false;
@@ -105,17 +102,12 @@ public class Paddle extends Image implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // translate the mouse coordinates to world coordinates
         testPoint.set(screenX, screenY, 0);
         stage.getCamera().unproject(testPoint);
 
-        // ask the world which bodies are within the given
-        // bounding box around the mouse pointer
         hitBody = null;
         world.QueryAABB(callback, testPoint.x - 0.1f, testPoint.y - 0.1f, testPoint.x + 0.1f, testPoint.y + 0.1f);
 
-        // if we hit something we create a new mouse joint
-        // and attach it to the hit body.
         if (hitBody != null) {
             MouseJointDef def = new MouseJointDef();
             def.bodyA = puck;

@@ -1,5 +1,6 @@
 package com.lincolnhack;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
@@ -19,8 +20,8 @@ public class Puck extends Image {
     @Getter private Body body;
     private World world;
 
-    public Puck(TextureRegion textureRegion, World world, float x, float y, float radius, float angle) {
-        super(textureRegion);
+    public Puck(Texture texture, World world, float x, float y, float radius, float angle) {
+        super(texture);
 
         this.setSize(radius, radius);
         this.setOrigin(this.getWidth()/2,this.getHeight()/2);
@@ -32,7 +33,6 @@ public class Puck extends Image {
 
         puckBodyDef.position.set(new Vector2(x, y));
 
-        // If we always want to apply force at the center of the body, use the following
         body = world.createBody(puckBodyDef);
 
         CircleShape circleShape = new CircleShape();
@@ -47,13 +47,11 @@ public class Puck extends Image {
         fixtureDef.restitution= 1f;
         Fixture fixture = body.createFixture(fixtureDef);
 
-
         circleShape.dispose();
     }
 
     @Override
     public void act(float delta) {
-        //body.setTransform(this.getX()+this.getWidth()/2,this.getY()+this.getHeight()/2, (float)Math.toRadians(getRotation()));
         super.act(delta);
 
         this.setRotation(body.getAngle()*  MathUtils.radiansToDegrees);

@@ -1,5 +1,6 @@
 package com.lincolnhack;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -10,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 public class Goal extends Image {
 
-    public Goal(TextureRegion textureRegion, World world, float x, float y, float width, float height, float angle) {
-        super(textureRegion);
+    public Goal(Texture texture, World world, float x, float y, float width, float height, float angle) {
+        super(texture);
         this.setSize(width, height);
         this.setOrigin(this.getWidth()/2,this.getHeight()/2);
         this.rotateBy(angle);
