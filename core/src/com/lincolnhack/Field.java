@@ -33,6 +33,9 @@ public class Field {
 
     Rectangle scoringField;
 
+    PaddleBarrier top;
+    PaddleBarrier bottom;
+
     public Field(Orientation orientation, World world, Stage stage, AssetManager assetManager, Puck puck) {
         this.world = world;
         float worldHeight = stage.getViewport().getWorldHeight();
@@ -52,6 +55,8 @@ public class Field {
                 sideBarrierRight = new Barrier(barrierTx, world, worldWidth - BARRIER_THICKNESS, 0, BARRIER_THICKNESS, worldHeight,0);
                 goalBarrierLeft = new Barrier(barrierTx, world, 0, 0,  worldWidth / 3, BARRIER_THICKNESS ,0);
                 goalBarrierRight = new Barrier(barrierTx, world, worldWidth * 2 / 3, 0,  worldWidth / 3, BARRIER_THICKNESS,0);
+                bottom = new PaddleBarrier(world, 0, 0, worldWidth, BARRIER_THICKNESS, 0);
+                top = new PaddleBarrier(world, 0, worldHeight, worldWidth, BARRIER_THICKNESS, 0);
                 break;
                 default:
                     throw new RuntimeException("wtf mate?");

@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+import java.io.FileReader;
+
 import lombok.Getter;
 
 public class Puck extends Image {
@@ -25,29 +27,28 @@ public class Puck extends Image {
     public Puck(Texture texture, World world, float x, float y, float radius, float angle) {
         super(texture);
 
-        this.setSize(radius, radius);
+        this.setSize(radius * 2, radius * 2);
         this.setOrigin(this.getWidth()/2,this.getHeight()/2);
         this.rotateBy(angle);
         this.setPosition(x,y);
         this.world = world;
+
         BodyDef puckBodyDef = new BodyDef();
         puckBodyDef.type = BodyDef.BodyType.DynamicBody;
-
         puckBodyDef.position.set(new Vector2(x, y));
-
         body = world.createBody(puckBodyDef);
-
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(this.getWidth()/2);
         body.setTransform(this.getX()+this.getWidth()/2,this.getY()+this.getHeight()/2, (float)Math.toRadians(angle));
 
-
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(radius);
         FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.filter.categoryBits = Filters.BOX2D_FILTER_PUCK;
+        fixtureDef.filter.maskBits = Filters.MASK_PUCK;
         fixtureDef.shape = circleShape;
         fixtureDef.density = 1f;
-        fixtureDef.friction = 0f;
+        fixtureDef.friction = 100f;
         fixtureDef.restitution= 1f;
-        Fixture fixture = body.createFixture(fixtureDef);
+        body.createFixture(fixtureDef);
 
         circleShape.dispose();
 

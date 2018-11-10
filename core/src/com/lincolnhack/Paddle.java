@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
@@ -33,26 +34,29 @@ public class Paddle extends Image implements InputProcessor {
         super(texture);
         this.stage = stage;
         this.puck = puck.getBody();
-        this.setSize(radius, radius);
+        this.setSize(radius * 2, radius * 2);
         this.setOrigin(this.getWidth()/2,this.getHeight()/2);
         this.rotateBy(angle);
         this.setPosition(x,y);
         this.world = world;
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-
-        bodyDef.position.set(new Vector2(x, y));
-        paddleBody = world.createBody(bodyDef);
-
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(this.getWidth()/2);
-        paddleBody.setTransform(this.getX()+this.getWidth()/2,this.getY()+this.getHeight()/2, (float)Math.toRadians(angle));
 
         MassData mass = new MassData();
         mass.mass = 10f;
-
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(new Vector2(x, y));
+        paddleBody = world.createBody(bodyDef);
+        paddleBody.setTransform(this.getX()+this.getWidth()/2,this.getY()+this.getHeight()/2, (float)Math.toRadians(angle));
         paddleBody.setMassData(mass);
-        paddleBody.createFixture(circleShape, 1.0f);
+
+        CircleShape circleShape = new CircleShape();
+        circleShape.setRadius(radius);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.filter.categoryBits = Filters.BOX2D_FILTER_PADDLE;
+        fixtureDef.filter.maskBits = Filters.MASK_PADDLE;
+        fixtureDef.shape = circleShape;
+        fixtureDef.density = 1f;
+        paddleBody.createFixture(fixtureDef);
 
         circleShape.dispose();
     }
