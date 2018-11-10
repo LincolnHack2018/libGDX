@@ -3,6 +3,7 @@ package com.lincolnhack;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -17,6 +18,7 @@ import lombok.Getter;
 
 public class Puck extends Image {
 
+    @Getter private Circle scoringCircle;
     @Getter private Body body;
     private World world;
 
@@ -48,6 +50,10 @@ public class Puck extends Image {
         Fixture fixture = body.createFixture(fixtureDef);
 
         circleShape.dispose();
+
+        scoringCircle = new Circle();
+        scoringCircle.setRadius(radius);
+        scoringCircle.setPosition(x, y);
     }
 
     @Override
@@ -58,7 +64,7 @@ public class Puck extends Image {
 
         this.setPosition(body.getPosition().x-this.getWidth()/2,body.getPosition().y-this.getHeight()/2);
 
-
+        this.scoringCircle.setPosition(body.getPosition().x-this.getWidth()/2,body.getPosition().y-this.getHeight()/2);
     }
 
     @Override

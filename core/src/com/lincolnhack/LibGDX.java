@@ -84,7 +84,7 @@ public class LibGDX extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		localField.update((Puck) puck);
 		ui.act(Gdx.graphics.getDeltaTime());
 
 		stage.act(Gdx.graphics.getDeltaTime());

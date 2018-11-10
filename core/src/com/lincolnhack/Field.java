@@ -2,7 +2,7 @@ package com.lincolnhack;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -30,6 +30,8 @@ public class Field {
     Barrier sideBarrierRight;
     Barrier goalBarrierLeft;
     Barrier goalBarrierRight;
+
+    Rectangle scoringField;
 
     public Field(Orientation orientation, World world, Stage stage, AssetManager assetManager, Puck puck) {
         this.world = world;
@@ -71,6 +73,21 @@ public class Field {
         stage.addActor(goalBarrierLeft);
         stage.addActor(goalBarrierRight);
         stage.addActor(paddle);
+
+        scoringField = new Rectangle();
+        scoringField.setWidth(worldWidth);
+        scoringField.setHeight(worldHeight);
+        scoringField.setPosition(0f, - worldHeight + 1);
+    }
+
+    public void update(Puck puck) {
+        if (scoringField.contains(puck.getScoringCircle())) {
+            System.out.println("GOAAAAAAAAAL");
+        }
+    }
+
+    public void reset() {
+
     }
 
 }
