@@ -116,9 +116,11 @@ public class Paddle extends Image implements InputProcessor {
             MouseJointDef def = new MouseJointDef();
             def.bodyA = puck;
             def.bodyB = paddleBody;
+            def.dampingRatio = 1f;
+            def.frequencyHz = 10f;
             def.collideConnected = true;
             def.target.set(testPoint.x, testPoint.y);
-            def.maxForce = 1000.0f * hitBody.getMass();
+            def.maxForce = 10000.0f * hitBody.getMass();
 
             mouseJoint = (MouseJoint)world.createJoint(def);
             hitBody.setAwake(true);

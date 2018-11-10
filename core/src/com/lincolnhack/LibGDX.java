@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import static com.lincolnhack.Orientation.HORIZONTAL;
 import static com.lincolnhack.Orientation.VERTICAL;
 
 
@@ -57,7 +58,7 @@ public class LibGDX extends ApplicationAdapter {
 		puckTx = assetManager.get(PUCK);
 		puck = new Puck(puckTx, world, stage.getViewport().getWorldWidth() / 2 - 0.5f, 5, 1, 0);
 
-		localField = new Field(VERTICAL, world, stage, assetManager, (Puck) puck);
+		localField = new Field(HORIZONTAL, world, stage, assetManager, (Puck) puck);
 
 		ui = new Stage(new ScreenViewport());
 		Score score = new Score(assetManager, ui);
@@ -90,7 +91,7 @@ public class LibGDX extends ApplicationAdapter {
 		stage.act(Gdx.graphics.getDeltaTime());
 		world.step(Gdx.graphics.getDeltaTime(), 8, 3);
 		stage.draw();
-		//ui.draw();
+		ui.draw();
 
 		debugRenderer.render(world, stage.getCamera().combined);
 	}

@@ -43,12 +43,19 @@ public class Field {
 
         Texture paddleTx = assetManager.get(PADDLE);
         Texture goalTx = assetManager.get(GOAL);
+
         Texture barrierTx = assetManager.get(BARRIER);
         barrierTx.setWrap(Repeat, Repeat);
 
         switch (orientation) {
             case HORIZONTAL:
-
+                sideBarrierLeft = new Barrier(barrierTx, world, 0, worldHeight - BARRIER_THICKNESS, worldWidth, BARRIER_THICKNESS,0);
+                sideBarrierRight = new Barrier(barrierTx, world, 0, 0, worldWidth, BARRIER_THICKNESS,0);
+                goalBarrierLeft = new Barrier(barrierTx, world, 0, worldHeight * 2 / 3,  BARRIER_THICKNESS,worldHeight / 3,0);
+                goalBarrierRight = new Barrier(barrierTx, world, 0, 0, BARRIER_THICKNESS, worldHeight / 3,0);
+                bottom = new PaddleBarrier(world, 0, 0, BARRIER_THICKNESS, worldHeight, 0);
+                top = new PaddleBarrier(world, worldWidth, 0, BARRIER_THICKNESS, worldHeight, 0);
+                goal = new Goal(goalTx, world, 0, worldHeight / 2 + 1.5f,  3,1.5f, -90);
                 break;
             case VERTICAL:
                 sideBarrierLeft = new Barrier(barrierTx, world, 0, 0, BARRIER_THICKNESS, worldHeight,0);
@@ -57,20 +64,14 @@ public class Field {
                 goalBarrierRight = new Barrier(barrierTx, world, worldWidth * 2 / 3, 0,  worldWidth / 3, BARRIER_THICKNESS,0);
                 bottom = new PaddleBarrier(world, 0, 0, worldWidth, BARRIER_THICKNESS, 0);
                 top = new PaddleBarrier(world, 0, worldHeight, worldWidth, BARRIER_THICKNESS, 0);
+                goal = new Goal(goalTx, world, stage.getViewport().getWorldWidth() / 2 - 1.5f, 0,  3,1.5f, 0);
                 break;
-                default:
-                    throw new RuntimeException("wtf mate?");
+            default:
+                throw new RuntimeException("wtf mate?");
         }
 
-        goal = new Goal(goalTx, world, stage.getViewport().getWorldWidth() / 2 - 1.5f, 0,  3,1.5f, 0);
 
-
-        paddle = new Paddle(paddleTx, stage, world, (Puck) puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, 1, 0);
-        paddle.addListener(new DragListener() {
-            public void drag(InputEvent event, float x, float y, int pointer) {
-                paddle.moveBy(x - paddle.getWidth() / 2, y - paddle.getHeight() / 2);
-            }
-        });
+        paddle = resetPaddle(orientation, assetManager);
 
         stage.addActor(goal);
         stage.addActor(sideBarrierLeft);
@@ -88,6 +89,31 @@ public class Field {
     public void update(Puck puck) {
         if (scoringField.contains(puck.getScoringCircle())) {
             System.out.println("GOAAAAAAAAAL");
+        }
+    }
+
+    public Paddle resetPaddle(Orientation orientation, AssetManager assetManager) {
+        final Paddle paddle = null;
+        switch (orientation) {
+            case HORIZONTAL:
+                //paddle = new Paddle(paddleTx, stage, world, (Puck) puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, 1, 0);
+                paddle.addListener(new DragListener() {
+                    public void drag(InputEvent event, float x, float y, int pointer) {
+                        paddle.moveBy(x - paddle.getWidth() / 2, y - paddle.getHeight() / 2);
+                    }
+                });
+                return paddle;
+            case VERTICAL:
+                //paddle = new Paddle(paddleTx, stage, world, (Puck) puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, 1, 0);
+                paddle.addListener(new DragListener() {
+                    public void drag(InputEvent event, float x, float y, int pointer) {
+                        paddle.moveBy(x - paddle.getWidth() / 2, y - paddle.getHeight() / 2);
+                    }
+                });
+                return paddle;
+
+            default:
+                throw new RuntimeException("NO!");
         }
     }
 
