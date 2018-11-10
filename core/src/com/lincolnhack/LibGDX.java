@@ -6,8 +6,11 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -19,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.lincolnhack.States.Player;
 
 import static com.lincolnhack.Orientation.VERTICAL;
 
@@ -31,13 +35,23 @@ public class LibGDX extends ApplicationAdapter {
 	public static final AssetDescriptor<Texture> PUCK = new AssetDescriptor<Texture>("Puck.png", Texture.class);
 	public static final AssetDescriptor<Texture> BARRIER = new AssetDescriptor<Texture>("Barrier.png", Texture.class);
 
+	Player player = new Player();
+	Player player2 = new Player();
+
+    private String yourScoreName;
+    private String oppenentsScoreName;
+
+    BitmapFont yourScore;
+    BitmapFont oppenentsScore;
+
 	AssetManager assetManager;
 	ShapeRenderer shaper;
 	Texture puckTx;
 	Stage stage;
 	Stage ui;
 
-	Field localField;
+	Field homeField;
+	Field awayField;
 	Actor puck;
 
 	World world;
@@ -46,6 +60,11 @@ public class LibGDX extends ApplicationAdapter {
 	@Override
 	public void create () {
 		loadAssets();
+		player.score = 0;
+		player2.score = 0;
+        yourScore = new BitmapFont();
+        oppenentsScore = new BitmapFont();
+
 
 		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
 		Viewport viewport = new FillViewport(10, 10 / ratio);
@@ -57,15 +76,12 @@ public class LibGDX extends ApplicationAdapter {
 		puckTx = assetManager.get(PUCK);
 		puck = new Puck(puckTx, world, stage.getViewport().getWorldWidth() / 2 - 0.5f, 5, 1, 0);
 
-		localField = new Field(VERTICAL, world, stage, assetManager, (Puck) puck);
-
-		ui = new Stage(new ScreenViewport());
-		Score score = new Score(assetManager, ui);
+		homeField = new Field(VERTICAL, world, stage, assetManager, (Puck) puck);
 
 		stage.addActor(puck);
 		stage.setDebugAll(true);
 
-		Gdx.input.setInputProcessor((InputProcessor) localField.getPaddle());
+		Gdx.input.setInputProcessor((InputProcessor) homeField.getPaddle());
 
 	}
 
@@ -84,20 +100,41 @@ public class LibGDX extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		localField.update((Puck) puck);
-		ui.act(Gdx.graphics.getDeltaTime());
+		player.score = homeField.update((Puck) puck, player.score);
+
+        SpriteBatch batch = new SpriteBatch();
+
+		yourScoreName = String.valueOf(player.score);
+		oppenentsScoreName = String.valueOf(player2.score);
 
 		stage.act(Gdx.graphics.getDeltaTime());
 		world.step(Gdx.graphics.getDeltaTime(), 8, 3);
 		stage.draw();
-		//ui.draw();
-
 		debugRenderer.render(world, stage.getCamera().combined);
-	}
-	
-	@Override
+        batch.begin();
+        LoadScore(batch);
+        LoadOpponentScore(batch);
+        batch.end();
+
+    }
+
+    private void LoadOpponentScore(SpriteBatch batch) {
+        oppenentsScore.setColor(Color.RED);
+        oppenentsScore.draw(batch, oppenentsScoreName, 50, 1100);
+        oppenentsScore.getData().setScale(5);
+    }
+
+    private void LoadScore(SpriteBatch batch) {
+        yourScore.setColor(Color.BLUE);
+        yourScore.draw(batch, yourScoreName, 50, 1000);
+        yourScore.getData().setScale(5);
+    }
+
+    @Override
 	public void dispose () {
 		assetManager.dispose();
 		stage.dispose();
 	}
+
+
 }

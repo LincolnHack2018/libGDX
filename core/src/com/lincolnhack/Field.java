@@ -4,11 +4,14 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 
+import lombok.Data;
 import lombok.Getter;
 
 import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
@@ -16,6 +19,7 @@ import static com.lincolnhack.LibGDX.BARRIER;
 import static com.lincolnhack.LibGDX.GOAL;
 import static com.lincolnhack.LibGDX.PADDLE;
 
+@Data
 public class Field {
 
     private static final float BARRIER_THICKNESS = 0.25f;
@@ -85,10 +89,13 @@ public class Field {
         scoringField.setPosition(0f, - worldHeight + 1);
     }
 
-    public void update(Puck puck) {
+    public int update(Puck puck, int score) {
         if (scoringField.contains(puck.getScoringCircle())) {
-            System.out.println("GOAAAAAAAAAL");
+            score = score + 1;
+            return score;
+
         }
+        return score;
     }
 
     public void reset() {
