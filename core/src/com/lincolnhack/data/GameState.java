@@ -1,4 +1,6 @@
 package com.lincolnhack.data;
 
-public class GameState {
+public enum GameState {
+    SETUP,
+    RUNNING
 }
