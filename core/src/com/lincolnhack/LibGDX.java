@@ -24,15 +24,19 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.lincolnhack.States.Player;
 
-import static com.lincolnhack.Orientation.HORIZONTAL;
-import static com.lincolnhack.Orientation.VERTICAL;
+import static com.lincolnhack.Orientation.VERTICAL_BOTTOM;
+import static com.lincolnhack.Orientation.VERTICAL_TOP;
+import static com.lincolnhack.Paddle.resetPaddle;
 
 
 public class LibGDX extends ApplicationAdapter {
 	public static final AssetDescriptor<TextureAtlas> SKIN_ATLAS = new AssetDescriptor<TextureAtlas>("skin/terra-mother-ui.atlas", TextureAtlas.class);
 	public static final AssetDescriptor<Skin> SKIN_JSON = new AssetDescriptor<Skin>("skin/terra-mother-ui.json", Skin.class,  new SkinLoader.SkinParameter("skin/terra-mother-ui.atlas"));
 	public static final AssetDescriptor<Texture> PADDLE = new AssetDescriptor<Texture>("Paddle.png", Texture.class);
-	public static final AssetDescriptor<Texture> GOAL = new AssetDescriptor<Texture>("Goal.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_BOTTOM = new AssetDescriptor<Texture>("Goal Bottom.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_LEFT = new AssetDescriptor<Texture>("Goal Left.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_RIGHT = new AssetDescriptor<Texture>("Goal Right.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_TOP = new AssetDescriptor<Texture>("Goal Top.png", Texture.class);
 	public static final AssetDescriptor<Texture> PUCK = new AssetDescriptor<Texture>("Puck.png", Texture.class);
 	public static final AssetDescriptor<Texture> BARRIER = new AssetDescriptor<Texture>("Barrier.png", Texture.class);
 
@@ -53,6 +57,7 @@ public class LibGDX extends ApplicationAdapter {
 
 	Field homeField;
 	Field awayField;
+	Paddle paddle;
 	Actor puck;
 
 	World world;
@@ -77,7 +82,13 @@ public class LibGDX extends ApplicationAdapter {
 		puckTx = assetManager.get(PUCK);
 		puck = new Puck(puckTx, world, stage.getViewport().getWorldWidth() / 2 - 0.5f, 5, 1, 0);
 
-		homeField = new Field(VERTICAL, world, stage, assetManager, (Puck) puck);
+
+		paddle = resetPaddle(VERTICAL_BOTTOM, stage, world, assetManager, (Puck) puck);
+
+		stage.addActor(paddle);
+
+		homeField = new Field(0,0, VERTICAL_BOTTOM, world, stage, assetManager, (Puck) puck);
+		awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck);
 
 		ui = new Stage(new ScreenViewport());
 		Score score = new Score(assetManager, ui);
@@ -85,7 +96,7 @@ public class LibGDX extends ApplicationAdapter {
 		stage.addActor(puck);
 		stage.setDebugAll(true);
 
-		Gdx.input.setInputProcessor((InputProcessor) homeField.getPaddle());
+		Gdx.input.setInputProcessor((InputProcessor) paddle);
 
 	}
 
@@ -94,7 +105,10 @@ public class LibGDX extends ApplicationAdapter {
 		assetManager.load(SKIN_ATLAS);
 		assetManager.load(SKIN_JSON);
 		assetManager.load(PADDLE);
-		assetManager.load(GOAL);
+		assetManager.load(GOAL_BOTTOM);
+		assetManager.load(GOAL_LEFT);
+		assetManager.load(GOAL_RIGHT);
+		assetManager.load(GOAL_TOP);
 		assetManager.load(PUCK);
 		assetManager.load(BARRIER);
 		assetManager.finishLoading();

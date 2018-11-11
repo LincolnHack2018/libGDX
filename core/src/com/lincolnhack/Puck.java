@@ -46,9 +46,12 @@ public class Puck extends Image {
         fixtureDef.filter.maskBits = Filters.MASK_PUCK;
         fixtureDef.shape = circleShape;
         fixtureDef.density = 1f;
-        fixtureDef.friction = 100f;
+        fixtureDef.friction = 1f;
         fixtureDef.restitution= 1f;
+
         body.createFixture(fixtureDef);
+        body.setAngularDamping(1f);
+        body.setLinearDamping(1f);
 
         circleShape.dispose();
 

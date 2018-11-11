@@ -1,6 +1,7 @@
 package com.lincolnhack;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -16,8 +17,12 @@ import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+
+import static com.lincolnhack.LibGDX.PADDLE;
 
 public class Paddle extends Image implements InputProcessor {
 
@@ -57,8 +62,35 @@ public class Paddle extends Image implements InputProcessor {
         fixtureDef.shape = circleShape;
         fixtureDef.density = 1f;
         paddleBody.createFixture(fixtureDef);
+        paddleBody.setAngularDamping(1f);
+        paddleBody.setLinearDamping(1f);
 
         circleShape.dispose();
+    }
+
+    public static Paddle resetPaddle(Orientation orientation, Stage stage, World world, AssetManager assetManager, Puck puck) {
+
+        Texture paddleTx = assetManager.get(PADDLE);
+        switch (orientation) {
+            case HORIZONTAL_LEFT:
+                Paddle paddleH = null;
+                paddleH = new Paddle(paddleTx, stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, 1, 0);
+
+                return paddleH;
+            case VERTICAL_BOTTOM:
+                Paddle paddleV = null;
+                paddleV = new Paddle(paddleTx, stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, 1, 0);
+
+                return paddleV;
+            case VERTICAL_TOP:
+                Paddle paddleV_Top = null;
+                paddleV_Top = new Paddle(paddleTx, stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, 1, 0);
+
+                return paddleV_Top;
+
+            default:
+                throw new RuntimeException("NO!");
+        }
     }
 
     @Override
@@ -86,6 +118,22 @@ public class Paddle extends Image implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
+        if (character=='d') {
+            float h = stage.getViewport().getWorldHeight();
+            float w = stage.getViewport().getWorldWidth();
+            stage.getCamera().position.x = w/2;
+            stage.getCamera().position.y = h * 3/2;
+
+            return true;
+        }
+        if (character=='b') {
+            float h = stage.getViewport().getWorldHeight();
+            float w = stage.getViewport().getWorldWidth();
+            stage.getCamera().position.x = w/2;
+            stage.getCamera().position.y = h/2;
+
+            return true;
+        }
         return false;
     }
 
