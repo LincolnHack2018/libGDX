@@ -94,6 +94,7 @@ public class Field {
 
     public int update(Puck puck, int score) {
         if (scoringField.contains(puck.getScoringCircle())) {
+
             score = score + 1;
             return score;
 
