@@ -186,8 +186,8 @@ public class LibGDX extends ApplicationAdapter {
 						.touchDownY(startY)
 						.touchUpX(endX)
 						.touchUpY(endY)
-						.deviceWidth(viewport.getWorldWidth())
-						.deviceHeight(viewport.getWorldHeight())
+						.deviceWidth(stage.getViewport().getWorldWidth())
+						.deviceHeight(stage.getViewport().getWorldHeight())
 						.build();
 
 				initDevice.init(device);
