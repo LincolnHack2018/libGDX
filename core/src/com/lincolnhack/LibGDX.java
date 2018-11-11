@@ -15,16 +15,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.lincolnhack.States.Player;
@@ -37,16 +35,12 @@ import com.lincolnhack.interfaces.Socket;
 import java.util.List;
 import java.util.UUID;
 
-import static com.lincolnhack.Orientation.VERTICAL_BOTTOM;
-import static com.lincolnhack.Orientation.VERTICAL_TOP;
-import static com.lincolnhack.Paddle.resetPaddle;
-import box2dLight.RayHandler;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
-import static com.badlogic.gdx.graphics.Texture.TextureWrap.Repeat;
-import static com.lincolnhack.Orientation.VERTIVAL;
-import static com.lincolnhack.util.SwipeUtil.nextToEdge;
+import static com.lincolnhack.Orientation.VERTICAL_BOTTOM;
+import static com.lincolnhack.Orientation.VERTICAL_TOP;
+import static com.lincolnhack.Paddle.resetPaddle;
 
 
 public class LibGDX extends ApplicationAdapter {
@@ -134,7 +128,6 @@ public class LibGDX extends ApplicationAdapter {
 		image3 = new Image(img);
 		image3.setScale(2);
 
-		Viewport viewport = new ScreenViewport();
 		stage = new Stage(viewport);
 		shaper = new ShapeRenderer();
 		debugRenderer = new Box2DDebugRenderer();
