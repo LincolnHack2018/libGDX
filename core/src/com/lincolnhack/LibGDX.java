@@ -131,7 +131,6 @@ public class LibGDX extends ApplicationAdapter {
 		image3 = new Image(img);
 		image3.setScale(2);
 
-        viewport = new ScreenViewport();
 		stage = new Stage(viewport);
 		shaper = new ShapeRenderer();
 		debugRenderer = new Box2DDebugRenderer();
@@ -143,10 +142,10 @@ public class LibGDX extends ApplicationAdapter {
 
 		paddle = resetPaddle(VERTICAL_BOTTOM, stage, world, assetManager, (Puck) puck);
 
-		stage.addActor(paddle);
-
 		homeField = new Field(0,0, VERTICAL_BOTTOM, world, stage, assetManager, (Puck) puck);
 		awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck);
+
+		stage.addActor(paddle);
 
 		ui = new Stage(new ScreenViewport());
 		Score score = new Score(assetManager, ui);
