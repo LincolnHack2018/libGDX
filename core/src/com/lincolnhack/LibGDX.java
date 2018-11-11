@@ -3,21 +3,31 @@ package com.lincolnhack;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetDescriptor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.lincolnhack.States.Player;
 import com.lincolnhack.data.Device;
 import com.lincolnhack.data.Response;
 import com.lincolnhack.interfaces.InitDevice;
@@ -27,6 +37,9 @@ import com.lincolnhack.interfaces.Socket;
 import java.util.List;
 import java.util.UUID;
 
+import static com.lincolnhack.Orientation.VERTICAL_BOTTOM;
+import static com.lincolnhack.Orientation.VERTICAL_TOP;
+import static com.lincolnhack.Paddle.resetPaddle;
 import box2dLight.RayHandler;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -37,21 +50,39 @@ import static com.lincolnhack.util.SwipeUtil.nextToEdge;
 
 
 public class LibGDX extends ApplicationAdapter {
-	Texture paddleTx;
-	Texture goalTx;
-	Texture puckTx;
-	Texture barrierTx;
+	public static final AssetDescriptor<TextureAtlas> SKIN_ATLAS = new AssetDescriptor<TextureAtlas>("skin/terra-mother-ui.atlas", TextureAtlas.class);
+	public static final AssetDescriptor<Skin> SKIN_JSON = new AssetDescriptor<Skin>("skin/terra-mother-ui.json", Skin.class,  new SkinLoader.SkinParameter("skin/terra-mother-ui.atlas"));
+	public static final AssetDescriptor<Texture> PADDLE = new AssetDescriptor<Texture>("Paddle.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_BOTTOM = new AssetDescriptor<Texture>("Goal Bottom.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_LEFT = new AssetDescriptor<Texture>("Goal Left.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_RIGHT = new AssetDescriptor<Texture>("Goal Right.png", Texture.class);
+	public static final AssetDescriptor<Texture> GOAL_TOP = new AssetDescriptor<Texture>("Goal Top.png", Texture.class);
+	public static final AssetDescriptor<Texture> PUCK = new AssetDescriptor<Texture>("Puck.png", Texture.class);
+	public static final AssetDescriptor<Texture> BARRIER = new AssetDescriptor<Texture>("Barrier.png", Texture.class);
 
-	Stage stage;
+	Player player = new Player();
+	Player player2 = new Player();
 
-	Actor paddle;
-	Actor goal;
-	Actor puck;
-	Actor barrier1;
+    private String yourScoreName;
+    private String oppenentsScoreName;
 
+    BitmapFont yourScore;
+    BitmapFont oppenentsScore;
+
+	AssetManager assetManager;
 	ShapeRenderer shaper;
+	Texture puckTx;
+	Stage stage;
+	Stage ui;
+
+	Field homeField;
+	Field awayField;
+	Paddle paddle;
+	Actor puck;
 
 	World world;
+	Box2DDebugRenderer debugRenderer;
+
 
 	boolean setup = false;
 	float startX = 0.0f;
@@ -86,6 +117,15 @@ public class LibGDX extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		loadAssets();
+		player.score = 0;
+		player2.score = 0;
+        yourScore = new BitmapFont();
+        oppenentsScore = new BitmapFont();
+
+
+		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
+		Viewport viewport = new FillViewport(10, 10 / ratio);
 		img = new Texture("point.png");
 		image1 = new Image(img);
 		image1.setScale(2);
@@ -97,37 +137,23 @@ public class LibGDX extends ApplicationAdapter {
 		Viewport viewport = new ScreenViewport();
 		stage = new Stage(viewport);
 		shaper = new ShapeRenderer();
+		debugRenderer = new Box2DDebugRenderer();
+		world = new World(new Vector2(0, 0), true);
 
-		paddleTx = new Texture("Paddle.png");
-		goalTx = new Texture("Goal.png");
-		puckTx = new Texture("Puck.png");
-		barrierTx = new Texture("Barrier.png");
-		barrierTx.setWrap(Repeat, Repeat);
+		puckTx = assetManager.get(PUCK);
+		puck = new Puck(puckTx, world, stage.getViewport().getWorldWidth() / 2 - 0.5f, 5, 1, 0);
 
-		TextureRegion region = new TextureRegion(paddleTx, 0, 0, 100, 100);
-		TextureRegion region1 = new TextureRegion(goalTx, 0, 0,  718, 458);
-		TextureRegion region2 = new TextureRegion(puckTx, 0, 0, 100, 100);
 
-		Gdx.input.setInputProcessor(stage);
-
-		world = new World(new Vector2(0, -10), true);
-
-		RayHandler.useDiffuseLight(false);
-
-		goal = new Goal(region1, world, stage.getViewport().getScreenWidth() / 4, 0,  718,458, 0);
-		stage.addActor(goal);
-
-		paddle = new Paddle(region, world, stage.getViewport().getScreenWidth()/2, 0, 100, 0);
-		paddle.addListener(new DragListener() {
-			public void drag(InputEvent event, float x, float y, int pointer) {
-				paddle.moveBy(x - paddle.getWidth() / 2, y - paddle.getHeight() / 2);
-			}
-		});
-		puck = new Puck(region2, world, 300, 300, 100, 0);
-
-		Field field = new Field(0, 0, VERTIVAL, world, stage, barrierTx);
+		paddle = resetPaddle(VERTICAL_BOTTOM, stage, world, assetManager, (Puck) puck);
 
 		stage.addActor(paddle);
+
+		homeField = new Field(0,0, VERTICAL_BOTTOM, world, stage, assetManager, (Puck) puck);
+		awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck);
+
+		ui = new Stage(new ScreenViewport());
+		Score score = new Score(assetManager, ui);
+
 		stage.addActor(puck);
 		stage.setDebugAll(true);
 
@@ -174,13 +200,34 @@ public class LibGDX extends ApplicationAdapter {
 		stage.addActor(image1);
 		stage.addActor(image2);
 		stage.addActor(image3);
+		Gdx.input.setInputProcessor((InputProcessor) paddle);
+
+	}
+
+	private void loadAssets() {
+		assetManager = new AssetManager();
+		assetManager.load(SKIN_ATLAS);
+		assetManager.load(SKIN_JSON);
+		assetManager.load(PADDLE);
+		assetManager.load(GOAL_BOTTOM);
+		assetManager.load(GOAL_LEFT);
+		assetManager.load(GOAL_RIGHT);
+		assetManager.load(GOAL_TOP);
+		assetManager.load(PUCK);
+		assetManager.load(BARRIER);
+		assetManager.finishLoading();
 	}
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		player.score = homeField.update((Puck) puck, player.score);
 
+        SpriteBatch batch = new SpriteBatch();
+
+		yourScoreName = String.valueOf(player.score);
+		oppenentsScoreName = String.valueOf(player2.score);
 		if (responses != null && !responses.isEmpty()) {
 			switch (responses.get(0).getDirection()){
 				case TOP:
@@ -206,13 +253,35 @@ public class LibGDX extends ApplicationAdapter {
 		}
 
 		stage.act(Gdx.graphics.getDeltaTime());
-		world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+		world.step(Gdx.graphics.getDeltaTime(), 8, 3);
 		stage.draw();
-	}
-	
-	@Override
+		//ui.draw();
+
+		debugRenderer.render(world, stage.getCamera().combined);
+        batch.begin();
+        LoadScore(batch);
+        LoadOpponentScore(batch);
+        batch.end();
+
+    }
+
+    private void LoadOpponentScore(SpriteBatch batch) {
+        oppenentsScore.setColor(Color.RED);
+        oppenentsScore.draw(batch, oppenentsScoreName, 50, 1100);
+        oppenentsScore.getData().setScale(5);
+    }
+
+    private void LoadScore(SpriteBatch batch) {
+        yourScore.setColor(Color.BLUE);
+        yourScore.draw(batch, yourScoreName, 50, 1000);
+        yourScore.getData().setScale(5);
+    }
+
+    @Override
 	public void dispose () {
-		paddleTx.dispose();
+		assetManager.dispose();
 		stage.dispose();
 	}
+
+
 }

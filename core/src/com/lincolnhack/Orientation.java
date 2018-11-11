@@ -2,5 +2,5 @@ package com.lincolnhack;
 
 public enum Orientation {
 
-    VERTIVAL, HORIZONTAL
+    VERTICAL_BOTTOM, VERTICAL_TOP, HORIZONTAL_LEFT, HORIZONTAL_RIGHT
 }
