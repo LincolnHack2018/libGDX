@@ -4,6 +4,9 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.lincolnhack.LibGDX;
+import com.lincolnhack.data.Device;
+import com.lincolnhack.interfaces.InitDevice;
+import com.lincolnhack.interfaces.Network;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -46,6 +49,16 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new LibGDX();
+                return new LibGDX(new InitDevice() {
+                        @Override
+                        public void init(Device device) throws Exception {
+
+                        }
+                }, new Network() {
+                        @Override
+                        public boolean connect() {
+                                return false;
+                        }
+                });
         }
 }
