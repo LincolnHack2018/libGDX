@@ -58,14 +58,15 @@ public class LibGDX extends ApplicationAdapter {
 	Player player = new Player();
 	Player player2 = new Player();
 
-    private String yourScoreName;
-    private String oppenentsScoreName;
+	private String yourScoreName;
+	private String oppenentsScoreName;
 
-    BitmapFont yourScore;
-    BitmapFont oppenentsScore;
+	BitmapFont yourScore;
+	BitmapFont oppenentsScore;
 
 	AssetManager assetManager;
 	ShapeRenderer shaper;
+	SpriteBatch batch;
 	Texture puckTx;
 	Stage stage;
 	Stage ui;
@@ -114,22 +115,23 @@ public class LibGDX extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		batch = new SpriteBatch();
 		loadAssets();
 		player.score = 0;
 		player2.score = 0;
-        yourScore = new BitmapFont();
-        oppenentsScore = new BitmapFont();
+		yourScore = new BitmapFont();
+		oppenentsScore = new BitmapFont();
 
 
 		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
 		Viewport viewport = new FillViewport(10, 10 / ratio);
 		img = new Texture("point.png");
 		image1 = new Image(img);
-		image1.setScale(2);
 		image2 = new Image(img);
-		image2.setScale(2);
 		image3 = new Image(img);
-		image3.setScale(2);
+		image1.setSize(1, 1);
+		image2.setSize(1, 1);
+		image3.setSize(1, 1);
 
 		stage = new Stage(viewport);
 		shaper = new ShapeRenderer();
@@ -155,44 +157,44 @@ public class LibGDX extends ApplicationAdapter {
 
 		socket.subscribe();
 
-        Gdx.input.setInputProcessor(new InputAdapter() {
+		Gdx.input.setInputProcessor(new InputAdapter() {
 
-            @Override
-            public boolean touchDown(int x, int y, int pointer, int button) {
-                Vector3 testPoint = new Vector3();
-                testPoint.set(x, y, 0);
-                stage.getCamera().unproject(testPoint);
-                startX = testPoint.x;
-                startY = testPoint.y;
-                System.out.println(startX);
-                System.out.println(startY);
-                return true;
-            }
+			@Override
+			public boolean touchDown(int x, int y, int pointer, int button) {
+				Vector3 testPoint = new Vector3();
+				testPoint.set(x, y, 0);
+				stage.getCamera().unproject(testPoint);
+				startX = testPoint.x;
+				startY = testPoint.y;
+				System.out.println(startX);
+				System.out.println(startY);
+				return true;
+			}
 
-            @Override
-            @SneakyThrows
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                Vector3 testPoint = new Vector3();
-                testPoint.set(screenX, screenY, 0);
-                stage.getCamera().unproject(testPoint);
-                endX = testPoint.x;
-                endY = testPoint.y;
+			@Override
+			@SneakyThrows
+			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+				Vector3 testPoint = new Vector3();
+				testPoint.set(screenX, screenY, 0);
+				stage.getCamera().unproject(testPoint);
+				endX = testPoint.x;
+				endY = testPoint.y;
 
-                Device device = Device.builder()
-                        .id(id)
-                        .touchDownX(startX)
-                        .touchDownY(startY)
-                        .touchUpX(endX)
-                        .touchUpY(endY)
-                        .deviceWidth(Gdx.graphics.getWidth())
-                        .deviceHeight(Gdx.graphics.getHeight())
-                        .build();
+				Device device = Device.builder()
+						.id(id)
+						.touchDownX(startX)
+						.touchDownY(startY)
+						.touchUpX(endX)
+						.touchUpY(endY)
+						.deviceWidth(Gdx.graphics.getWidth())
+						.deviceHeight(Gdx.graphics.getHeight())
+						.build();
 
-                initDevice.init(device);
+				initDevice.init(device);
 
-                return true;
-            }
-        });
+				return true;
+			}
+		});
 
 		stage.addActor(image1);
 		stage.addActor(image2);
@@ -218,32 +220,39 @@ public class LibGDX extends ApplicationAdapter {
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		player.score = homeField.update((Puck) puck, player.score);
 
-        SpriteBatch batch = new SpriteBatch();
+		switch (gameState) {
+			case SETUP:
+				if (responses != null && !responses.isEmpty()) {
+					if(gameState == GameState.SETUP){
+						Gdx.input.setInputProcessor((InputProcessor) paddle);
+						gameState = GameState.RUNNING;
+					}
+					switch (responses.get(0).getDirection()){
+						case TOP:
+						case BOTTOM:
+							image1.setPosition(responses.get(0).getIntersectX() - responses.get(0).getIntersectMinus(), responses.get(0).getIntersectY());
+							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
+							image3.setPosition(responses.get(0).getIntersectX() + responses.get(0).getIntersectPlus(), responses.get(0).getIntersectY());
+							break;
+						case RIGHT:
+						case LEFT:
+							image1.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() - responses.get(0).getIntersectMinus());
+							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
+							image3.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() + responses.get(0).getIntersectPlus());
+							break;
+					}
+				}
+				break;
 
-		yourScoreName = String.valueOf(player.score);
-		oppenentsScoreName = String.valueOf(player2.score);
-		if (responses != null && !responses.isEmpty()) {
-		    if(gameState == GameState.SETUP){
-                Gdx.input.setInputProcessor((InputProcessor) paddle);
-                gameState = GameState.RUNNING;
-            }
-			switch (responses.get(0).getDirection()){
-				case TOP:
-				case BOTTOM:
-					image1.setPosition(responses.get(0).getIntersectX() - responses.get(0).getIntersectMinus(), responses.get(0).getIntersectY());
-					image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-					image3.setPosition(responses.get(0).getIntersectX() + responses.get(0).getIntersectPlus(), responses.get(0).getIntersectY());
-					break;
-				case RIGHT:
-				case LEFT:
-					image1.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() - responses.get(0).getIntersectMinus());
-					image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-					image3.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() + responses.get(0).getIntersectPlus());
-					break;
-			}
+			case RUNNING:
+
+				break;
+			default:
+				break;
 		}
+
+		homeField.update((Puck) puck, player.score);
 
 		stage.act(Gdx.graphics.getDeltaTime());
 		world.step(Gdx.graphics.getDeltaTime(), 8, 3);
@@ -251,26 +260,21 @@ public class LibGDX extends ApplicationAdapter {
 		//ui.draw();
 
 		debugRenderer.render(world, stage.getCamera().combined);
-        batch.begin();
-        LoadScore(batch);
-        LoadOpponentScore(batch);
-        batch.end();
+	}
 
-    }
+	private void LoadOpponentScore(SpriteBatch batch) {
+		oppenentsScore.setColor(Color.RED);
+		oppenentsScore.draw(batch, oppenentsScoreName, 50, 1100);
+		oppenentsScore.getData().setScale(5);
+	}
 
-    private void LoadOpponentScore(SpriteBatch batch) {
-        oppenentsScore.setColor(Color.RED);
-        oppenentsScore.draw(batch, oppenentsScoreName, 50, 1100);
-        oppenentsScore.getData().setScale(5);
-    }
+	private void LoadScore(SpriteBatch batch) {
+		yourScore.setColor(Color.BLUE);
+		yourScore.draw(batch, yourScoreName, 50, 1000);
+		yourScore.getData().setScale(5);
+	}
 
-    private void LoadScore(SpriteBatch batch) {
-        yourScore.setColor(Color.BLUE);
-        yourScore.draw(batch, yourScoreName, 50, 1000);
-        yourScore.getData().setScale(5);
-    }
-
-    @Override
+	@Override
 	public void dispose () {
 		assetManager.dispose();
 		stage.dispose();
