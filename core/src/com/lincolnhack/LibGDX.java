@@ -27,13 +27,19 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.lincolnhack.States.Player;
 import com.lincolnhack.data.Device;
+import com.lincolnhack.data.Direction;
 import com.lincolnhack.data.GameState;
+import com.lincolnhack.data.Pair;
 import com.lincolnhack.data.Response;
 import com.lincolnhack.interfaces.InitDevice;
 import com.lincolnhack.interfaces.Network;
 import com.lincolnhack.interfaces.Socket;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import lombok.Setter;
@@ -107,12 +113,12 @@ public class LibGDX extends ApplicationAdapter {
 	}
 
 	Texture img;
-	Image image1;
-	Image image2;
-	Image image3;
+//	Image image1;
+//	Image image2;
+//	Image image3;
 
 	GameState gameState = GameState.SETUP;
-
+	ShapeRenderer shapeRenderer;
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -122,16 +128,18 @@ public class LibGDX extends ApplicationAdapter {
 		yourScore = new BitmapFont();
 		oppenentsScore = new BitmapFont();
 
+		shapeRenderer = new ShapeRenderer();
+
 
 		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
 		Viewport viewport = new FillViewport(10, 10 / ratio);
 		img = new Texture("point.png");
-		image1 = new Image(img);
-		image2 = new Image(img);
-		image3 = new Image(img);
-		image1.setSize(1, 1);
-		image2.setSize(1, 1);
-		image3.setSize(1, 1);
+//		image1 = new Image(img);
+//		image2 = new Image(img);
+//		image3 = new Image(img);
+//		image1.setSize(1, 1);
+//		image2.setSize(1, 1);
+//		image3.setSize(1, 1);
 
 		stage = new Stage(viewport);
 		shaper = new ShapeRenderer();
@@ -143,9 +151,6 @@ public class LibGDX extends ApplicationAdapter {
 
 
 		paddle = resetPaddle(VERTICAL_BOTTOM, stage, world, assetManager, (Puck) puck);
-
-		homeField = new Field(0,0, VERTICAL_BOTTOM, world, stage, assetManager, (Puck) puck);
-		awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck);
 
 		stage.addActor(paddle);
 
@@ -196,10 +201,10 @@ public class LibGDX extends ApplicationAdapter {
 			}
 		});
 
-		stage.addActor(image1);
-		stage.addActor(image2);
-		stage.addActor(image3);
-
+//		stage.addActor(image1);
+//		stage.addActor(image2);
+//		stage.addActor(image3);
+		shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
 	}
 
 	private void loadAssets() {
@@ -223,36 +228,40 @@ public class LibGDX extends ApplicationAdapter {
 
 		switch (gameState) {
 			case SETUP:
-				if (responses != null && !responses.isEmpty()) {
+				//if (responses != null && !responses.isEmpty()) {
 					if(gameState == GameState.SETUP){
 						Gdx.input.setInputProcessor((InputProcessor) paddle);
 						gameState = GameState.RUNNING;
+						Map<Direction, List<Pair<Float>>> openings = new HashMap<>();
+						openings.put(Direction.RIGHT, Arrays.asList(new Pair<>(3f, 5f)));
+						homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
+						//awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck, responses.get(0));
 					}
-					switch (responses.get(0).getDirection()){
-						case TOP:
-						case BOTTOM:
-							image1.setPosition(responses.get(0).getIntersectX() - responses.get(0).getIntersectMinus(), responses.get(0).getIntersectY());
-							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-							image3.setPosition(responses.get(0).getIntersectX() + responses.get(0).getIntersectPlus(), responses.get(0).getIntersectY());
-							break;
-						case RIGHT:
-						case LEFT:
-							image1.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() - responses.get(0).getIntersectMinus());
-							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-							image3.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() + responses.get(0).getIntersectPlus());
-							break;
-					}
-				}
+//					switch (responses.get(0).getDirection()){
+//						case TOP:
+//						case BOTTOM:
+////							image1.setPosition(responses.get(0).getIntersectX() - responses.get(0).getIntersectMinus(), responses.get(0).getIntersectY());
+////							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
+////							image3.setPosition(responses.get(0).getIntersectX() + responses.get(0).getIntersectPlus(), responses.get(0).getIntersectY());
+//							break;
+//						case RIGHT:
+//						case LEFT:
+////							image1.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() - responses.get(0).getIntersectMinus());
+////							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
+////							image3.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() + responses.get(0).getIntersectPlus());
+//							break;
+//					}
+				//}
 				break;
 
 			case RUNNING:
-
+				//homeField.update((Puck) puck, player.score);
+				homeField.draw(shapeRenderer, Color.BLACK);
 				break;
 			default:
 				break;
 		}
 
-		homeField.update((Puck) puck, player.score);
 
 		stage.act(Gdx.graphics.getDeltaTime());
 		world.step(Gdx.graphics.getDeltaTime(), 8, 3);

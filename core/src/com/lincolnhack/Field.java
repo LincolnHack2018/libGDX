@@ -1,13 +1,24 @@
 package com.lincolnhack;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.lincolnhack.data.Direction;
+import com.lincolnhack.data.Pair;
+import com.lincolnhack.data.Response;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import lombok.Data;
 import lombok.Getter;
@@ -18,119 +29,100 @@ import static com.lincolnhack.LibGDX.GOAL_BOTTOM;
 import static com.lincolnhack.LibGDX.GOAL_LEFT;
 import static com.lincolnhack.LibGDX.GOAL_TOP;
 import static com.lincolnhack.LibGDX.PADDLE;
+import static com.lincolnhack.data.Direction.BOTTOM;
+import static com.lincolnhack.data.Direction.LEFT;
+import static com.lincolnhack.data.Direction.RIGHT;
+import static com.lincolnhack.data.Direction.TOP;
 
 @Data
 public class Field {
+    List<Vector2> points;
 
-    private static final float BARRIER_THICKNESS = 0.25f;
+    public Field(Map<Direction, List<Pair<Float>>> sides, float fieldWidth, float fieldHeight) {
+        points = new ArrayList<>();
 
-    World world;
-    Stage stage;
-
-    @Getter Actor paddle;
-    Actor goal;
-
-    Barrier sideBarrierLeft;
-    Barrier sideBarrierRight;
-    Barrier goalBarrierLeft;
-    Barrier goalBarrierRight;
-
-    Rectangle scoringField;
-
-    PaddleBarrier top;
-    PaddleBarrier bottom;
-
-    public Field(float x, float y, Orientation orientation, World world, Stage stage, AssetManager assetManager, Puck puck) {
-        this.world = world;
-        this.stage = stage;
-        float worldHeight = stage.getViewport().getWorldHeight();
-        float worldWidth = stage.getViewport().getWorldWidth();
-
-        Texture barrierTx = assetManager.get(BARRIER);
-        barrierTx.setWrap(Repeat, Repeat);
-
-        switch (orientation) {
-            case HORIZONTAL_LEFT:
-                sideBarrierLeft = new Barrier(barrierTx, world, x, y + worldHeight - BARRIER_THICKNESS, worldWidth, BARRIER_THICKNESS,0);
-                sideBarrierRight = new Barrier(barrierTx, world, x, y, worldWidth, BARRIER_THICKNESS,0);
-                goalBarrierLeft = new Barrier(barrierTx, world, x, y + (worldHeight * 2 / 3),  BARRIER_THICKNESS,worldHeight / 3,0);
-                goalBarrierRight = new Barrier(barrierTx, world, x, y, BARRIER_THICKNESS, worldHeight / 3,0);
-                bottom = new PaddleBarrier(world, x, y, BARRIER_THICKNESS, worldHeight, 0);
-                top = new PaddleBarrier(world, x+ worldWidth, y, BARRIER_THICKNESS, worldHeight, 0);
-                goal = new Goal(assetManager.get(GOAL_LEFT), world, x, y + (worldHeight / 3),  3,worldHeight/3, 0);
-                break;
-            case VERTICAL_BOTTOM:
-                sideBarrierLeft = new Barrier(barrierTx, world, x, y, BARRIER_THICKNESS, worldHeight,0);
-                sideBarrierRight = new Barrier(barrierTx, world, x + (worldWidth - BARRIER_THICKNESS), y, BARRIER_THICKNESS, worldHeight,0);
-                goalBarrierLeft = new Barrier(barrierTx, world, x, y,  worldWidth / 3, BARRIER_THICKNESS ,0);
-                goalBarrierRight = new Barrier(barrierTx, world, x + (worldWidth * 2 / 3), y,  worldWidth / 3, BARRIER_THICKNESS,0);
-                bottom = new PaddleBarrier(world, x, y, worldWidth, BARRIER_THICKNESS, 0);
-                top = new PaddleBarrier(world, x, y + worldHeight, worldWidth, BARRIER_THICKNESS, 0);
-                goal = new Goal(assetManager.get(GOAL_BOTTOM), world, x + (worldWidth / 3), y,  worldWidth/3,1.5f, 0);
-                break;
-            case VERTICAL_TOP:
-                sideBarrierLeft = new Barrier(barrierTx, world, x, y, BARRIER_THICKNESS, worldHeight,0);
-                sideBarrierRight = new Barrier(barrierTx, world, x + worldWidth - BARRIER_THICKNESS, y, BARRIER_THICKNESS, worldHeight,0);
-                goalBarrierLeft = new Barrier(barrierTx, world, x, y + worldHeight - BARRIER_THICKNESS,  worldWidth / 3, BARRIER_THICKNESS ,0);
-                goalBarrierRight = new Barrier(barrierTx, world, x + (worldWidth * 2 / 3), y + worldHeight - BARRIER_THICKNESS,  worldWidth / 3, BARRIER_THICKNESS,0);
-                bottom = new PaddleBarrier(world, x, y, worldWidth, BARRIER_THICKNESS, 0);
-                top = new PaddleBarrier(world, x, y + worldHeight, worldWidth, BARRIER_THICKNESS, 0);
-                goal = new Goal(assetManager.get(GOAL_TOP), world, x + (worldWidth / 3), y + worldHeight - 1.5f,  worldWidth/3,1.5f, 0);
-                break;
-            default:
-                throw new RuntimeException("wtf mate?");
+        List<Pair<Float>> list = sides.get(BOTTOM);
+        points.add(new Vector2(0, 1));
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                Pair<Float> pair = list.get(i);
+                pair = getNormalisedValues(pair, fieldWidth);
+                if(null != pair) {
+                    points.add(new Vector2(pair.getFirst(), 1));
+                    points.add(new Vector2(pair.getSecond(), 1));
+                }
+            }
         }
+        points.add(new Vector2(fieldWidth, 1));
+
+        list = sides.get(RIGHT);
+        points.add(new Vector2(fieldWidth - 1, 0));
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                Pair<Float> pair = list.get(i);
+                pair = getNormalisedValues(pair, fieldHeight);
+                if(null != pair) {
+                    points.add(new Vector2(fieldWidth - 1, pair.getFirst()));
+                    points.add(new Vector2(fieldWidth - 1, pair.getSecond()));
+                }
+            }
+        }
+        points.add(new Vector2(fieldWidth - 1, fieldHeight));
+
+        list = sides.get(TOP);
+        points.add(new Vector2(0, fieldHeight - 1));
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                Pair<Float> pair = list.get(i);
+                pair = getNormalisedValues(pair, fieldWidth);
+                if(null != pair) {
+                    points.add(new Vector2(pair.getFirst(), fieldHeight - 1));
+                    points.add(new Vector2(pair.getSecond(), fieldHeight - 1));
+                }
+            }
+        }
+        points.add(new Vector2(fieldWidth, fieldHeight - 1));
 
 
+        list = sides.get(LEFT);
+        points.add(new Vector2(1, 0));
+        if (list != null && !list.isEmpty()) {
+            for (int i = 0; i < list.size(); i++) {
+                Pair<Float> pair = list.get(i);
+                pair = getNormalisedValues(pair, fieldHeight);
+                if(null != pair) {
+                    points.add(new Vector2(1, pair.getFirst()));
+                    points.add(new Vector2(1, pair.getSecond()));
+                }
+            }
+        }
+        points.add(new Vector2(1, fieldHeight));
 
-        stage.addActor(goal);
-        stage.addActor(sideBarrierLeft);
-        stage.addActor(sideBarrierRight);
-        stage.addActor(goalBarrierLeft);
-        stage.addActor(goalBarrierRight);
-
-        scoringField = createScoringField(orientation, worldWidth, worldHeight);
     }
 
-    public int update(Puck puck, int score) {
-        if (scoringField.contains(puck.getScoringCircle())) {
-
-            score = score + 1;
-            return score;
-
+    private Pair<Float> getNormalisedValues(Pair<Float> pair, float maxValue) {
+        if (pair.getFirst() >= 0 && pair.getFirst() <= maxValue
+                && pair.getSecond() >= 0 && pair.getSecond() <= maxValue) {
+            return pair;
+        } else if (pair.getFirst() < 0 && pair.getSecond() >= 0) {
+            return new Pair<>(0f, pair.getSecond());
+        } else if (pair.getFirst() >= 0 && pair.getSecond() < 0) {
+            return new Pair<>(pair.getFirst(), 0f);
+        } else if (pair.getFirst() > maxValue && pair.getSecond() <= maxValue) {
+            return new Pair<>(maxValue, pair.getSecond());
+        } else if (pair.getFirst() <= maxValue && pair.getSecond() > maxValue) {
+            return new Pair<>(pair.getFirst(), maxValue);
         }
-        return score;
+        return null;
     }
 
-    public Rectangle createScoringField(Orientation orientation, float worldWidth, float worldHeight) {
-        Rectangle scoringField = new Rectangle();
-        switch (orientation) {
-            case HORIZONTAL_LEFT:
-                scoringField.setWidth(worldWidth);
-                scoringField.setHeight(worldHeight);
-                scoringField.setPosition(0f, -worldWidth + 1);
-                break;
-            case VERTICAL_BOTTOM:
-                scoringField.setWidth(worldWidth);
-                scoringField.setHeight(worldHeight);
-                scoringField.setPosition(0f, -worldHeight + 1);
-                break;
-            case VERTICAL_TOP:
-                scoringField.setWidth(worldWidth);
-                scoringField.setHeight(worldHeight);
-                scoringField.setPosition(0f, worldHeight - 1);
-                break;
-            default:
-                throw new RuntimeException("NO!");
-
+    public void draw(ShapeRenderer shapeRenderer, Color color) {
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(color);
+        for (int i = 0; i + 1 < points.size(); i+=2) {
+            shapeRenderer.line(points.get(i), points.get(i+1));
         }
-        return scoringField;
-    }
-
-
-
-    public void reset() {
-
+        shapeRenderer.end();
     }
 
 }
