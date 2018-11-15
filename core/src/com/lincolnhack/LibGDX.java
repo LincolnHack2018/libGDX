@@ -113,9 +113,6 @@ public class LibGDX extends ApplicationAdapter {
 	}
 
 	Texture img;
-//	Image image1;
-//	Image image2;
-//	Image image3;
 
 	GameState gameState = GameState.SETUP;
 	ShapeRenderer shapeRenderer;
@@ -134,12 +131,6 @@ public class LibGDX extends ApplicationAdapter {
 		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
 		Viewport viewport = new FillViewport(10, 10 / ratio);
 		img = new Texture("point.png");
-//		image1 = new Image(img);
-//		image2 = new Image(img);
-//		image3 = new Image(img);
-//		image1.setSize(1, 1);
-//		image2.setSize(1, 1);
-//		image3.setSize(1, 1);
 
 		stage = new Stage(viewport);
 		shaper = new ShapeRenderer();
@@ -201,9 +192,6 @@ public class LibGDX extends ApplicationAdapter {
 			}
 		});
 
-//		stage.addActor(image1);
-//		stage.addActor(image2);
-//		stage.addActor(image3);
 		shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
 	}
 
@@ -228,30 +216,18 @@ public class LibGDX extends ApplicationAdapter {
 
 		switch (gameState) {
 			case SETUP:
-				//if (responses != null && !responses.isEmpty()) {
+				if (responses != null && !responses.isEmpty()) {
 					if(gameState == GameState.SETUP){
-						Gdx.input.setInputProcessor((InputProcessor) paddle);
+						Gdx.input.setInputProcessor(paddle);
 						gameState = GameState.RUNNING;
 						Map<Direction, List<Pair<Float>>> openings = new HashMap<>();
-						openings.put(Direction.RIGHT, Arrays.asList(new Pair<>(3f, 5f)));
+						for(int i = 0; i < responses.size(); i++) {
+							openings.put(responses.get(i).getDirection(), responses.get(i).getIntersectDistances());
+						}
 						homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
 						//awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck, responses.get(0));
 					}
-//					switch (responses.get(0).getDirection()){
-//						case TOP:
-//						case BOTTOM:
-////							image1.setPosition(responses.get(0).getIntersectX() - responses.get(0).getIntersectMinus(), responses.get(0).getIntersectY());
-////							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-////							image3.setPosition(responses.get(0).getIntersectX() + responses.get(0).getIntersectPlus(), responses.get(0).getIntersectY());
-//							break;
-//						case RIGHT:
-//						case LEFT:
-////							image1.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() - responses.get(0).getIntersectMinus());
-////							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-////							image3.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() + responses.get(0).getIntersectPlus());
-//							break;
-//					}
-				//}
+				}
 				break;
 
 			case RUNNING:
