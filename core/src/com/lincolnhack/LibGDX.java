@@ -20,7 +20,6 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -35,7 +34,6 @@ import com.lincolnhack.interfaces.InitDevice;
 import com.lincolnhack.interfaces.Network;
 import com.lincolnhack.interfaces.Socket;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +44,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 
 import static com.lincolnhack.Orientation.VERTICAL_BOTTOM;
-import static com.lincolnhack.Orientation.VERTICAL_TOP;
 import static com.lincolnhack.Paddle.resetPaddle;
 
 
@@ -64,9 +61,6 @@ public class LibGDX extends ApplicationAdapter {
 	Player player = new Player();
 	Player player2 = new Player();
 
-	private String yourScoreName;
-	private String oppenentsScoreName;
-
 	BitmapFont yourScore;
 	BitmapFont oppenentsScore;
 
@@ -78,7 +72,6 @@ public class LibGDX extends ApplicationAdapter {
 	Stage ui;
 
 	Field homeField;
-	Field awayField;
 	Paddle paddle;
 	Actor puck;
 
@@ -112,11 +105,6 @@ public class LibGDX extends ApplicationAdapter {
 		this.network = network;
 	}
 
-	Texture img;
-//	Image image1;
-//	Image image2;
-//	Image image3;
-
 	GameState gameState = GameState.SETUP;
 	ShapeRenderer shapeRenderer;
 	@Override
@@ -133,15 +121,9 @@ public class LibGDX extends ApplicationAdapter {
 
 		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
 		Viewport viewport = new FillViewport(10, 10 / ratio);
-		img = new Texture("point.png");
-//		image1 = new Image(img);
-//		image2 = new Image(img);
-//		image3 = new Image(img);
-//		image1.setSize(1, 1);
-//		image2.setSize(1, 1);
-//		image3.setSize(1, 1);
-
 		stage = new Stage(viewport);
+
+
 		shaper = new ShapeRenderer();
 		debugRenderer = new Box2DDebugRenderer();
 		world = new World(new Vector2(0, 0), true);
@@ -200,10 +182,6 @@ public class LibGDX extends ApplicationAdapter {
 				return true;
 			}
 		});
-
-//		stage.addActor(image1);
-//		stage.addActor(image2);
-//		stage.addActor(image3);
 		shapeRenderer.setProjectionMatrix(stage.getCamera().combined);
 	}
 
@@ -220,42 +198,29 @@ public class LibGDX extends ApplicationAdapter {
 		assetManager.load(BARRIER);
 		assetManager.finishLoading();
 	}
+	boolean doOnce =true;
 
 	@Override
 	public void render () {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		if (doOnce) {
+			Gdx.app.log(this.getClass().getSimpleName(), "Screen size is " + stage.getViewport().getScreenWidth() / Gdx.graphics.getPpcX() + "cm wide x " +
+					stage.getViewport().getScreenHeight() / Gdx.graphics.getPpcY() + "cm high");
+			doOnce = false;
+		}
 
 		switch (gameState) {
 			case SETUP:
-				//if (responses != null && !responses.isEmpty()) {
-					if(gameState == GameState.SETUP){
-						Gdx.input.setInputProcessor((InputProcessor) paddle);
-						gameState = GameState.RUNNING;
-						Map<Direction, List<Pair<Float>>> openings = new HashMap<>();
-						openings.put(Direction.RIGHT, Arrays.asList(new Pair<>(3f, 5f)));
-						homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
-						//awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck, responses.get(0));
-					}
-//					switch (responses.get(0).getDirection()){
-//						case TOP:
-//						case BOTTOM:
-////							image1.setPosition(responses.get(0).getIntersectX() - responses.get(0).getIntersectMinus(), responses.get(0).getIntersectY());
-////							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-////							image3.setPosition(responses.get(0).getIntersectX() + responses.get(0).getIntersectPlus(), responses.get(0).getIntersectY());
-//							break;
-//						case RIGHT:
-//						case LEFT:
-////							image1.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() - responses.get(0).getIntersectMinus());
-////							image2.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY());
-////							image3.setPosition(responses.get(0).getIntersectX(), responses.get(0).getIntersectY() + responses.get(0).getIntersectPlus());
-//							break;
-//					}
-				//}
+				Gdx.input.setInputProcessor((InputProcessor) paddle);
+				gameState = GameState.RUNNING;
+				Map<Direction, List<Pair<Float>>> openings = new HashMap<>();
+				openings.put(Direction.RIGHT, Arrays.asList(new Pair<>(3f, 5f)));
+				homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
+
 				break;
 
 			case RUNNING:
-				//homeField.update((Puck) puck, player.score);
 				homeField.draw(shapeRenderer, Color.BLACK);
 				break;
 			default:
@@ -266,22 +231,10 @@ public class LibGDX extends ApplicationAdapter {
 		stage.act(Gdx.graphics.getDeltaTime());
 		world.step(Gdx.graphics.getDeltaTime(), 8, 3);
 		stage.draw();
-		//ui.draw();
 
 		debugRenderer.render(world, stage.getCamera().combined);
 	}
 
-	private void LoadOpponentScore(SpriteBatch batch) {
-		oppenentsScore.setColor(Color.RED);
-		oppenentsScore.draw(batch, oppenentsScoreName, 50, 1100);
-		oppenentsScore.getData().setScale(5);
-	}
-
-	private void LoadScore(SpriteBatch batch) {
-		yourScore.setColor(Color.BLUE);
-		yourScore.draw(batch, yourScoreName, 50, 1000);
-		yourScore.getData().setScale(5);
-	}
 
 	@Override
 	public void dispose () {
