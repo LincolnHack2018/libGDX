@@ -105,6 +105,8 @@ public class LibGDX extends ApplicationAdapter {
 		this.network = network;
 	}
 
+	Texture img;
+
 	GameState gameState = GameState.SETUP;
 	ShapeRenderer shapeRenderer;
 	@Override
@@ -121,9 +123,9 @@ public class LibGDX extends ApplicationAdapter {
 
 		float ratio = (float)(Gdx.graphics.getWidth()) / (float)(Gdx.graphics.getHeight());
 		Viewport viewport = new FillViewport(10, 10 / ratio);
+		img = new Texture("point.png");
+
 		stage = new Stage(viewport);
-
-
 		shaper = new ShapeRenderer();
 		debugRenderer = new Box2DDebugRenderer();
 		world = new World(new Vector2(0, 0), true);
@@ -212,12 +214,18 @@ public class LibGDX extends ApplicationAdapter {
 
 		switch (gameState) {
 			case SETUP:
-				Gdx.input.setInputProcessor((InputProcessor) paddle);
-				gameState = GameState.RUNNING;
-				Map<Direction, List<Pair<Float>>> openings = new HashMap<>();
-				openings.put(Direction.RIGHT, Arrays.asList(new Pair<>(3f, 5f)));
-				homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
-
+				if (responses != null && !responses.isEmpty()) {
+					if(gameState == GameState.SETUP){
+						Gdx.input.setInputProcessor(paddle);
+						gameState = GameState.RUNNING;
+						Map<Direction, List<Pair<Float>>> openings = new HashMap<>();
+						for(int i = 0; i < responses.size(); i++) {
+							openings.put(responses.get(i).getDirection(), responses.get(i).getIntersectDistances());
+						}
+						homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
+						//awayField = new Field(0, stage.getViewport().getWorldHeight(), VERTICAL_TOP, world, stage, assetManager, (Puck) puck, responses.get(0));
+					}
+				}
 				break;
 
 			case RUNNING:

@@ -42,61 +42,61 @@ public class Field {
         points = new ArrayList<>();
 
         List<Pair<Float>> list = sides.get(BOTTOM);
-        points.add(new Vector2(0, 1));
+        points.add(new Vector2(0, 0));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
-                    points.add(new Vector2(pair.getFirst(), 1));
-                    points.add(new Vector2(pair.getSecond(), 1));
+                    points.add(new Vector2(pair.getFirst(), 0));
+                    points.add(new Vector2(pair.getSecond(), 0));
                 }
             }
         }
-        points.add(new Vector2(fieldWidth, 1));
+        points.add(new Vector2(fieldWidth, 0));
 
         list = sides.get(RIGHT);
-        points.add(new Vector2(fieldWidth - 1, 0));
+        points.add(new Vector2(fieldWidth, 0));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
-                    points.add(new Vector2(fieldWidth - 1, pair.getFirst()));
-                    points.add(new Vector2(fieldWidth - 1, pair.getSecond()));
+                    points.add(new Vector2(fieldWidth , pair.getFirst()));
+                    points.add(new Vector2(fieldWidth , pair.getSecond()));
                 }
             }
         }
-        points.add(new Vector2(fieldWidth - 1, fieldHeight));
+        points.add(new Vector2(fieldWidth, fieldHeight));
 
         list = sides.get(TOP);
-        points.add(new Vector2(0, fieldHeight - 1));
+        points.add(new Vector2(0, fieldHeight));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
-                    points.add(new Vector2(pair.getFirst(), fieldHeight - 1));
-                    points.add(new Vector2(pair.getSecond(), fieldHeight - 1));
+                    points.add(new Vector2(pair.getFirst(), fieldHeight));
+                    points.add(new Vector2(pair.getSecond(), fieldHeight));
                 }
             }
         }
-        points.add(new Vector2(fieldWidth, fieldHeight - 1));
+        points.add(new Vector2(fieldWidth, fieldHeight));
 
 
         list = sides.get(LEFT);
-        points.add(new Vector2(1, 0));
+        points.add(new Vector2(0, 0));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
-                    points.add(new Vector2(1, pair.getFirst()));
-                    points.add(new Vector2(1, pair.getSecond()));
+                    points.add(new Vector2(0, pair.getFirst()));
+                    points.add(new Vector2(0, pair.getSecond()));
                 }
             }
         }
-        points.add(new Vector2(1, fieldHeight));
+        points.add(new Vector2(0, fieldHeight));
 
     }
 

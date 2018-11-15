@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class Response {
     private String id;
-    private ArrayList<Float> intersectDistances;
+    private ArrayList<Pair<Float>> intersectDistances;
     private Direction direction;
     private boolean mainDevice;
     private float screenOneX;
