@@ -1,32 +1,28 @@
-package com.lincolnhack;
+package com.lincolnhack.objects;
 
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.MassData;
-import com.badlogic.gdx.physics.box2d.QueryCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
-import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.lincolnhack.Filters;
+import com.lincolnhack.Orientation;
+import com.lincolnhack.Puck;
 
 import static com.lincolnhack.LibGDX.PADDLE;
 
 public class Paddle extends Image {
 
-    private static final float PADDLE_RADIUS = 0.5f;
+    public static final float PADDLE_RADIUS = 0.5f;
 
     Stage stage;
     Body paddleBody;
@@ -37,7 +33,7 @@ public class Paddle extends Image {
     Body puck;
     Body hitBody;
 
-    public Paddle(Texture texture, Stage stage, World world, Puck puck, float x, float y, float radius, float angle) {
+    Paddle(Texture texture, Stage stage, World world, Puck puck, float x, float y, float radius, float angle) {
         super(texture);
         this.stage = stage;
         this.puck = puck.getBody();

@@ -1,4 +1,4 @@
-package com.lincolnhack;
+package com.lincolnhack.objects;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,42 +8,12 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.lincolnhack.Puck;
 
-public class HostPaddle extends Paddle  implements InputProcessor {
+public class HostPaddle extends Paddle implements InputProcessor {
 
     public HostPaddle(Texture texture, Stage stage, World world, Puck puck, float x, float y, float radius, float angle) {
         super(texture, stage, world, puck, x, y, radius, angle);
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        if (character=='d') {
-            float h = stage.getViewport().getWorldHeight();
-            float w = stage.getViewport().getWorldWidth();
-            stage.getCamera().position.x = w/2;
-            stage.getCamera().position.y = h * 3/2;
-
-            return true;
-        }
-        if (character=='b') {
-            float h = stage.getViewport().getWorldHeight();
-            float w = stage.getViewport().getWorldWidth();
-            stage.getCamera().position.x = w/2;
-            stage.getCamera().position.y = h/2;
-
-            return true;
-        }
-        return false;
     }
 
     QueryCallback callback = new QueryCallback() {
@@ -60,6 +30,20 @@ public class HostPaddle extends Paddle  implements InputProcessor {
         }
     };
 
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
