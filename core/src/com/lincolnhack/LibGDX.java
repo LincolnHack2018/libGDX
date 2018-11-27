@@ -164,7 +164,7 @@ public class LibGDX extends ApplicationAdapter {
             }
         });
 
-        Gdx.input.setInputProcessor(paddle);
+        //Gdx.input.setInputProcessor(paddle);
     }
 
     private void loadAssets() {
