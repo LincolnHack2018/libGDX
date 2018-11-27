@@ -55,11 +55,11 @@ public class Field {
         points.add(new Vector2(fieldWidth, fieldHeight));
 
         list = sides.get(TOP);
-        points.add(new Vector2(0, fieldHeight));
+        points.add(new Vector2(fieldWidth, fieldHeight));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                sortNumberGreater(pair);
+                sortNumberSmaller(pair);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
                     points.add(new Vector2(pair.getFirst(), fieldHeight));
@@ -67,15 +67,15 @@ public class Field {
                 }
             }
         }
-        points.add(new Vector2(fieldWidth, fieldHeight));
+        points.add(new Vector2(0, fieldHeight));
 
 
         list = sides.get(LEFT);
-        points.add(new Vector2(0, 0));
+        points.add(new Vector2(0, fieldHeight));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                sortNumberGreater(pair);
+                sortNumberSmaller(pair);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
                     points.add(new Vector2(0, pair.getFirst()));
@@ -83,7 +83,8 @@ public class Field {
                 }
             }
         }
-        points.add(new Vector2(0, fieldHeight));
+        points.add(new Vector2(0, 0));
+
 
     }
 
