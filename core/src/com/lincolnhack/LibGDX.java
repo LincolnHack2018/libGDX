@@ -121,7 +121,7 @@ public class LibGDX extends ApplicationAdapter {
         stage.addActor(puck);
         stage.setDebugAll(true);
 
-        gameState = GameState.RUNNING;
+        gameState = GameState.SETUP;
 
         socket.subscribe();
 
