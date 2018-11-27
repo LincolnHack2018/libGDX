@@ -25,112 +25,82 @@ public class Field {
         points = new ArrayList<>();
 
         List<Pair<Float>> list = sides.get(BOTTOM);
-
+        points.add(new Vector2(0, 0));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(fieldWidth, 0));
-                }else{
-                    points.add(new Vector2(0, 0));
-                }
+                sortNumberGreater(pair);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
                     points.add(new Vector2(pair.getFirst(), 0));
                     points.add(new Vector2(pair.getSecond(), 0));
                 }
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(0, 0));
-                }else{
-                    points.add(new Vector2(fieldWidth, 0));
-                }
             }
         }
-        else{
-            points.add(new Vector2(0, 0));
-            points.add(new Vector2(fieldWidth, 0));
-        }
+        points.add(new Vector2(fieldWidth, 0));
 
         list = sides.get(RIGHT);
-
+        points.add(new Vector2(fieldWidth, 0));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(fieldWidth, fieldHeight));
-                }else{
-                    points.add(new Vector2(fieldWidth, 0));
-                }
+                sortNumberGreater(pair);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
                     points.add(new Vector2(fieldWidth , pair.getFirst()));
                     points.add(new Vector2(fieldWidth , pair.getSecond()));
                 }
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(fieldWidth, 0));
-                }else{
-                    points.add(new Vector2(fieldWidth, fieldHeight));
-                }
             }
         }
-        else{
-            points.add(new Vector2(fieldWidth, 0));
-            points.add(new Vector2(fieldWidth, fieldHeight));
-        }
+        points.add(new Vector2(fieldWidth, fieldHeight));
 
         list = sides.get(TOP);
-
+        points.add(new Vector2(0, fieldHeight));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(fieldWidth, fieldHeight));
-                }else{
-                    points.add(new Vector2(0, 0));
-                }
+                sortNumberGreater(pair);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
                     points.add(new Vector2(pair.getFirst(), fieldHeight));
                     points.add(new Vector2(pair.getSecond(), fieldHeight));
                 }
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(0, 0));
-                }else{
-                    points.add(new Vector2(fieldWidth, fieldHeight));
-                }
             }
-        }else {
-            points.add(new Vector2(0, fieldHeight));
-            points.add(new Vector2(fieldWidth, fieldHeight));
         }
+        points.add(new Vector2(fieldWidth, fieldHeight));
 
 
         list = sides.get(LEFT);
-
+        points.add(new Vector2(0, 0));
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(0, fieldHeight));
-                }else{
-                    points.add(new Vector2(0, pair.getFirst()));
-                }
+                sortNumberGreater(pair);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
                     points.add(new Vector2(0, pair.getFirst()));
                     points.add(new Vector2(0, pair.getSecond()));
                 }
-                if(pair.getFirst() > pair.getSecond()){
-                    points.add(new Vector2(0, 0));
-                }else{
-                    points.add(new Vector2(0, fieldHeight));
-                }
             }
-        }else{
-            points.add(new Vector2(0, 0));
-            points.add(new Vector2(0, fieldHeight));
         }
+        points.add(new Vector2(0, fieldHeight));
 
+    }
+
+    private void sortNumberGreater(Pair<Float> pair){
+        if(pair.getFirst() > pair.getSecond()){
+            float temp = pair.getFirst();
+            pair.setFirst(pair.getSecond());
+            pair.setSecond(temp);
+        }
+    }
+
+    private void sortNumberSmaller(Pair<Float> pair){
+        if(pair.getFirst() < pair.getSecond()){
+            float temp = pair.getFirst();
+            pair.setFirst(pair.getSecond());
+            pair.setSecond(temp);
+        }
     }
 
     private Pair<Float> getNormalisedValues(Pair<Float> pair, float maxValue) {
