@@ -29,7 +29,7 @@ public class Field {
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                sortNumberGreater(pair);
+                setSmallestNumberFirst(pair);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
                     points.add(new Vector2(pair.getFirst(), 0));
@@ -44,7 +44,7 @@ public class Field {
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                sortNumberGreater(pair);
+                setSmallestNumberFirst(pair);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
                     points.add(new Vector2(fieldWidth , pair.getFirst()));
@@ -59,7 +59,7 @@ public class Field {
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                sortNumberSmaller(pair);
+                setBiggestNumberFirst(pair);
                 pair = getNormalisedValues(pair, fieldWidth);
                 if(null != pair) {
                     points.add(new Vector2(pair.getFirst(), fieldHeight));
@@ -75,7 +75,7 @@ public class Field {
         if (list != null && !list.isEmpty()) {
             for (int i = 0; i < list.size(); i++) {
                 Pair<Float> pair = list.get(i);
-                sortNumberSmaller(pair);
+                setBiggestNumberFirst(pair);
                 pair = getNormalisedValues(pair, fieldHeight);
                 if(null != pair) {
                     points.add(new Vector2(0, pair.getFirst()));
@@ -88,7 +88,7 @@ public class Field {
 
     }
 
-    private void sortNumberGreater(Pair<Float> pair){
+    private void setSmallestNumberFirst(Pair<Float> pair){
         if(pair.getFirst() > pair.getSecond()){
             float temp = pair.getFirst();
             pair.setFirst(pair.getSecond());
@@ -96,7 +96,7 @@ public class Field {
         }
     }
 
-    private void sortNumberSmaller(Pair<Float> pair){
+    private void setBiggestNumberFirst(Pair<Float> pair){
         if(pair.getFirst() < pair.getSecond()){
             float temp = pair.getFirst();
             pair.setFirst(pair.getSecond());
