@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.lincolnhack.Puck;
-import com.lincolnhack.data.Pair;
 
 public class ClientPaddle extends Paddle {
 
@@ -30,8 +29,18 @@ public class ClientPaddle extends Paddle {
         }
     };
 
-    public void update(Pair<Float> touch) {
-        testPoint.set(touch.getFirst(), touch.getSecond(), 0);
+    public void update(Touch touch) {
+        if (touch.down) {
+            touchDown(touch.x, touch.y);
+        } else if (touch.up) {
+            touchUp();
+        } else if (touch.dragged) {
+            touchDragged(touch.x, touch.y);
+        }
+    }
+
+    public boolean touchDown(float screenX, float screenY) {
+        testPoint.set(screenX, screenY, 0);
 
         hitBody = null;
         world.QueryAABB(callback, testPoint.x - 0.1f, testPoint.y - 0.1f, testPoint.x + 0.1f, testPoint.y + 0.1f);
@@ -49,5 +58,23 @@ public class ClientPaddle extends Paddle {
             mouseJoint = (MouseJoint)world.createJoint(def);
             hitBody.setAwake(true);
         }
+
+        return false;
+    }
+
+    public boolean touchUp() {
+        if (mouseJoint != null) {
+            world.destroyJoint(mouseJoint);
+            mouseJoint = null;
+        }
+        return false;
+    }
+
+    public boolean touchDragged(float screenX, float screenY) {
+        if (mouseJoint != null) {
+            testPoint.set(screenX, screenY, 0);
+            mouseJoint.setTarget(target.set(testPoint.x, testPoint.y));
+        }
+        return false;
     }
 }

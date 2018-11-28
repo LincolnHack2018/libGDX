@@ -28,6 +28,7 @@ import com.lincolnhack.data.Response;
 import com.lincolnhack.interfaces.InitDevice;
 import com.lincolnhack.interfaces.Network;
 import com.lincolnhack.interfaces.Socket;
+import com.lincolnhack.objects.ClientInputProcessor;
 import com.lincolnhack.objects.ClientPaddle;
 import com.lincolnhack.objects.HostPaddle;
 
@@ -91,6 +92,9 @@ public class LibGDX extends ApplicationAdapter {
 
     GameState gameState;
 
+    ClientPaddle clientPaddle;
+    ClientInputProcessor clientInputProcessor;
+
     @Override
     public void create() {
         loadAssets();
@@ -110,10 +114,10 @@ public class LibGDX extends ApplicationAdapter {
         puckTx = assetManager.get(PUCK);
         puck = new Puck(puckTx, world, stage.getViewport().getWorldWidth() / 2 - 0.5f, 5, 0.5f, 0);
         homeField = new Field(new HashMap<>(), stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
-        paddle = new HostPaddle(assetManager.get(PADDLE), stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, PADDLE_RADIUS, 0);
-        ClientPaddle clientPaddle = new ClientPaddle(assetManager.get(PADDLE_GREEN), stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, PADDLE_RADIUS, 0);
+        //paddle = new HostPaddle(assetManager.get(PADDLE), stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, PADDLE_RADIUS, 0);
+        clientPaddle = new ClientPaddle(assetManager.get(PADDLE_GREEN), stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, PADDLE_RADIUS, 0);
 
-        stage.addActor(paddle);
+        //stage.addActor(paddle);
         stage.addActor(clientPaddle);
 
         ui = new Stage(new ScreenViewport());
@@ -164,7 +168,8 @@ public class LibGDX extends ApplicationAdapter {
             }
         });
 
-        //Gdx.input.setInputProcessor(paddle);
+        //clientInputProcessor = new ClientInputProcessor(stage);
+        //Gdx.input.setInputProcessor(clientInputProcessor);
     }
 
     private void loadAssets() {
@@ -219,7 +224,7 @@ public class LibGDX extends ApplicationAdapter {
     }
 
     private void gameUpdate() {
-
+        clientPaddle.update(clientInputProcessor.getTouch());
     }
 
 
