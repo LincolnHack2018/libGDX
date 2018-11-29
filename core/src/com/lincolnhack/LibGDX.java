@@ -125,7 +125,7 @@ public class LibGDX extends ApplicationAdapter {
         stage.addActor(puck);
         stage.setDebugAll(true);
 
-        gameState = GameState.SETUP;
+        gameState = GameState.RUNNING;
 
         socket.subscribe();
 
@@ -168,8 +168,8 @@ public class LibGDX extends ApplicationAdapter {
             }
         });
 
-        //clientInputProcessor = new ClientInputProcessor(stage);
-        //Gdx.input.setInputProcessor(clientInputProcessor);
+        clientInputProcessor = new ClientInputProcessor(stage);
+        Gdx.input.setInputProcessor(clientInputProcessor);
     }
 
     private void loadAssets() {

@@ -31,15 +31,15 @@ public class ClientPaddle extends Paddle {
 
     public void update(Touch touch) {
         if (touch.down) {
-            touchDown(touch.x, touch.y);
+            touchDown(touch.x, touch.y, touch);
         } else if (touch.up) {
-            touchUp();
+            touchUp(touch);
         } else if (touch.dragged) {
             touchDragged(touch.x, touch.y);
         }
     }
 
-    public boolean touchDown(float screenX, float screenY) {
+    public boolean touchDown(float screenX, float screenY, Touch touch) {
         testPoint.set(screenX, screenY, 0);
 
         hitBody = null;
@@ -58,15 +58,16 @@ public class ClientPaddle extends Paddle {
             mouseJoint = (MouseJoint)world.createJoint(def);
             hitBody.setAwake(true);
         }
-
+        touch.down = false;
         return false;
     }
 
-    public boolean touchUp() {
+    public boolean touchUp(Touch touch) {
         if (mouseJoint != null) {
             world.destroyJoint(mouseJoint);
             mouseJoint = null;
         }
+        touch.up = false;
         return false;
     }
 
