@@ -127,6 +127,8 @@ project(":ios-moe") {
         compile "com.badlogicgames.gdx:gdx-backend-moe:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-ios"
+        implementation("com.squareup.okhttp3:okhttp:3.12.0")
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
         
     }
 }
