@@ -1,4 +1,4 @@
-package com.lincolnhack.States;
+package com.lincolnhack.states;
 
 import lombok.Data;
 

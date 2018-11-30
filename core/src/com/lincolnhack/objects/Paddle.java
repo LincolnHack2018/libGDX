@@ -1,6 +1,5 @@
 package com.lincolnhack.objects;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
@@ -15,10 +14,8 @@ import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.lincolnhack.Filters;
-import com.lincolnhack.Orientation;
 import com.lincolnhack.Puck;
 
-import static com.lincolnhack.LibGDX.PADDLE;
 
 public class Paddle extends Image {
 
@@ -64,31 +61,6 @@ public class Paddle extends Image {
         paddleBody.setLinearDamping(1f);
 
         circleShape.dispose();
-    }
-
-    public static Paddle resetPaddle(Orientation orientation, Stage stage, World world, AssetManager assetManager, Puck puck) {
-
-        Texture paddleTx = assetManager.get(PADDLE);
-        switch (orientation) {
-            case HORIZONTAL_LEFT:
-                Paddle paddleH = null;
-                paddleH = new Paddle(paddleTx, stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, PADDLE_RADIUS, 0);
-
-                return paddleH;
-            case VERTICAL_BOTTOM:
-                Paddle paddleV = null;
-                paddleV = new Paddle(paddleTx, stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, 3f, PADDLE_RADIUS, 0);
-
-                return paddleV;
-            case VERTICAL_TOP:
-                Paddle paddleV_Top = null;
-                paddleV_Top = new Paddle(paddleTx, stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, PADDLE_RADIUS, 0);
-
-                return paddleV_Top;
-
-            default:
-                throw new RuntimeException("NO!");
-        }
     }
 
     @Override

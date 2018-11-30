@@ -10,16 +10,6 @@ import com.lincolnhack.interfaces.Network;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new LibGDX(new InitDevice() {
-			@Override
-			public void init(Device device) throws Exception {
-
-			}
-		}, new Network() {
-			@Override
-			public boolean connect() {
-				return false;
-			}
-		}), config);
+		new LwjglApplication(new LibGDX(), config);
 	}
 }

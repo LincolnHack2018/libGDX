@@ -20,7 +20,7 @@ public class IOSMoeLauncher extends IOSApplication.Delegate {
     protected IOSApplication createApplication() {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
         config.useAccelerometer = false;
-        return new IOSApplication(new LibGDX(new HttpConnect(), new ServerConnection(), new AndroidSocket()), config);
+        return new IOSApplication(new LibGDX(new HttpConnect(), new AndroidSocket()), config);
     }
 
     public static void main(String[] argv) {

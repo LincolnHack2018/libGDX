@@ -9,7 +9,7 @@ import com.rafaskoberg.gdx.typinglabel.TypingLabel;
 
 import lombok.Getter;
 
-import static com.lincolnhack.LibGDX.SKIN_JSON;
+import static com.lincolnhack.assets.AssetDescriptors.SKIN_JSON;
 
 public class Score {
 
