@@ -14,4 +14,5 @@ public class Response {
     private float screenOneY;
     private float screenTwoX;
     private float screenTwoY;
+    private int orderNumber;
 }
