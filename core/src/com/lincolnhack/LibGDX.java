@@ -6,11 +6,13 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -32,6 +34,7 @@ import java.util.Map;
 import lombok.Setter;
 
 import static com.lincolnhack.assets.AssetDescriptors.BARRIER;
+import static com.lincolnhack.assets.AssetDescriptors.FONT;
 import static com.lincolnhack.assets.AssetDescriptors.GOAL_BOTTOM;
 import static com.lincolnhack.assets.AssetDescriptors.GOAL_LEFT;
 import static com.lincolnhack.assets.AssetDescriptors.GOAL_RIGHT;
@@ -65,6 +68,8 @@ public class LibGDX extends ApplicationAdapter {
     ClientInputProcessor clientInputProcessor;
 
     ScreenSetup screenSetup;
+
+    Text text;
 
     @Setter
     private static List<Response> responses;
@@ -112,6 +117,7 @@ public class LibGDX extends ApplicationAdapter {
 
         screenSetup = new ScreenSetup(stage, socket, initDevice);
         Gdx.input.setInputProcessor(screenSetup);
+        text = new Text(ui, assetManager);
 
 //        clientInputProcessor = new ClientInputProcessor(stage);
 //        Gdx.input.setInputProcessor(clientInputProcessor);
@@ -153,6 +159,9 @@ public class LibGDX extends ApplicationAdapter {
         world.step(Gdx.graphics.getDeltaTime(), 8, 3);
         stage.draw();
 
+        ui.act();
+        ui.draw();
+
         debugRenderer.render(world, stage.getCamera().combined);
     }
 
@@ -165,6 +174,7 @@ public class LibGDX extends ApplicationAdapter {
                 openings.put(responses.get(i).getDirection(), responses.get(i).getIntersectDistances());
             }
             homeField = new Field(openings, stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
+            text.queueText(responses.get(0).getOrderNumber() + "", 5f);
         }
     }
 
