@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.lincolnhack.LibGDX.id;
+import static com.lincolnhack.states.ScreenSetup.id;
 
 public class WebsocketConnect extends AsyncTask<String, Void, String> {
     private boolean result;
