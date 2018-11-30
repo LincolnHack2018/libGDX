@@ -224,7 +224,7 @@ public class LibGDX extends ApplicationAdapter {
     }
 
     private void gameUpdate() {
-        clientPaddle.update(clientInputProcessor.getTouch());
+        //clientPaddle.update(clientInputProcessor.getTouch());
     }
 
 

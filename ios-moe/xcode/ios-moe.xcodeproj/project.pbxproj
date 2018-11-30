@@ -226,7 +226,7 @@
 					};
 					58C6F5231DA66CB600309CB6 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = FW4LAGJH25;
+						DevelopmentTeam = 74E59HUSH5;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -495,7 +495,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = FW4LAGJH25;
+				DEVELOPMENT_TEAM = 74E59HUSH5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -536,7 +536,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = FW4LAGJH25;
+				DEVELOPMENT_TEAM = 74E59HUSH5;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
