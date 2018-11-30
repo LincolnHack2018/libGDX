@@ -15,4 +15,5 @@ public class Device implements Serializable{
     private float touchUpY;
     private float deviceWidth;
     private float deviceHeight;
+    private long touchDownTime;
 }
