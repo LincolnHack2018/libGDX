@@ -57,6 +57,7 @@ public class ScreenSetup extends InputAdapter {
                 .touchDownY(startY)
                 .touchUpX(endX)
                 .touchUpY(endY)
+                .touchDownTime(System.currentTimeMillis())
                 .deviceWidth(stage.getViewport().getWorldWidth())
                 .deviceHeight(stage.getViewport().getWorldHeight())
                 .build();
