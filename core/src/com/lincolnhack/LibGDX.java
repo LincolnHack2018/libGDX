@@ -33,6 +33,7 @@ import java.util.Map;
 
 import lombok.Setter;
 
+import static com.lincolnhack.Debug.drawBoundaries;
 import static com.lincolnhack.assets.AssetDescriptors.BARRIER;
 import static com.lincolnhack.assets.AssetDescriptors.FONT;
 import static com.lincolnhack.assets.AssetDescriptors.GOAL_BOTTOM;
@@ -103,7 +104,7 @@ public class LibGDX extends ApplicationAdapter {
 
         puckTx = assetManager.get(PUCK);
         puck = new Puck(puckTx, world, stage.getViewport().getWorldWidth() / 2 - 0.5f, 5, 0.5f, 0);
-        homeField = new Field(new HashMap<>(), stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
+        //homeField = new Field(new HashMap<>(), stage.getViewport().getWorldWidth(), stage.getViewport().getWorldHeight());
         clientPaddle = new ClientPaddle(assetManager.get(PADDLE_GREEN), stage, world, puck,stage.getViewport().getWorldWidth() / 2 - 0.5f, stage.getViewport().getWorldHeight() - 3f, PADDLE_RADIUS, 0);
 
         stage.addActor(clientPaddle);
@@ -149,12 +150,12 @@ public class LibGDX extends ApplicationAdapter {
                 break;
             case RUNNING:
                 gameUpdate();
+                homeField.draw(shaper, Color.GREEN);
                 break;
             default:
                 break;
         }
 
-        homeField.draw(shaper, Color.GREEN);
         stage.act(Gdx.graphics.getDeltaTime());
         world.step(Gdx.graphics.getDeltaTime(), 8, 3);
         stage.draw();
@@ -163,6 +164,7 @@ public class LibGDX extends ApplicationAdapter {
         ui.draw();
 
         debugRenderer.render(world, stage.getCamera().combined);
+        drawBoundaries(shaper, stage);
     }
 
     private void setupUpdate() {

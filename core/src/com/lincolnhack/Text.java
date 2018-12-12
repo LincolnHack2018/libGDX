@@ -32,13 +32,13 @@ public class Text {
 
         FreetypeFontLoader.FreeTypeFontLoaderParameter letterFont = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
         letterFont.fontFileName = FONT.fileName;
-        letterFont.fontParameters.size = 100;
+        letterFont.fontParameters.size = 200;
         assetManager.load(FONT.fileName, BitmapFont.class, letterFont);
         assetManager.finishLoading();
 
         BitmapFont font = assetManager.get(FONT);
 
-        style.fontColor = Color.ROYAL;
+        style.fontColor = Color.PINK;
         style.font = font;
         label = new Label("", style);
     }
@@ -46,8 +46,8 @@ public class Text {
     public void queueText(String text, float duration) {
         label = new Label(text, style);
         label.addAction(sequence(fadeOut(duration)));
-        label.setX((stage.getViewport().getScreenWidth() / 2) - 100);
-        label.setY((stage.getViewport().getScreenHeight() / 2) - 100);
+        label.setX(50);
+        label.setY(50);
         stage.addActor(label);
     }
 }
